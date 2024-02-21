@@ -1,19 +1,45 @@
 package com.naraci.app.media.web;
 
+import com.naraci.app.media.entity.request.SrcRequest;
+import com.naraci.app.media.entity.response.DouyinVideoResponse;
+import com.naraci.app.media.service.MediaService;
+import com.naraci.core.aop.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import lombok.SneakyThrows;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.net.ConnectException;
+
+import java.net.SocketTimeoutException;
+import java.util.List;
 
 /**
  * @author ShenZhaoYu
  * @date 2024/2/20
  */
 @RestController
+@Tag(name = "音频媒体解析")
 @RequestMapping("/jx")
 public class MediaController {
-//
-//    @Operation(summary = "Ins图片解析")
-//    @PostMapping("/ins/photo")
-//    public
+
+    @Resource
+    private MediaService mediaService;
+
+    @SneakyThrows
+    @Operation(summary = "抖音无水印视频解析")
+    @PostMapping("/douyin/video")
+    public DouyinVideoResponse douyinVideo(
+            @RequestBody SrcRequest url
+            ) throws IOException {
+        try {
+            return mediaService.douyinVideo(url);
+        } catch (ConnectException | SocketTimeoutException e) {
+            throw new CustomException("处理超时，请反馈管理员");
+        } catch (ClassCastException e) {
+            throw new CustomException("解析失败，输入的链接可能不合法");
+        }
+    }
 }

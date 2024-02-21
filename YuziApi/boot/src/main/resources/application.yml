@@ -51,7 +51,7 @@ springdoc:
 
     - group: '视频解析服务'
       paths-to-match: '/**'
-      packages-to-scan: com.naraci.app.wechatconfig
+      packages-to-scan: com.naraci.app.media
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true

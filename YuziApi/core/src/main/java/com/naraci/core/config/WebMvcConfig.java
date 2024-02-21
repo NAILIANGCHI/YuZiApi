@@ -43,7 +43,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         interceptorRegistration.excludePathPatterns("/plugin/**");
         interceptorRegistration.excludePathPatterns("/index.html");
         interceptorRegistration.excludePathPatterns("/show.html");
-        interceptorRegistration.excludePathPatterns("/**/doc.html");
+        interceptorRegistration.excludePathPatterns("/**/doc.html/**");
         interceptorRegistration.excludePathPatterns("/**/swagger-resources/**");
         interceptorRegistration.excludePathPatterns("/**/webjars/**");
         interceptorRegistration.excludePathPatterns("/**/error/**");
@@ -51,7 +51,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         interceptorRegistration.excludePathPatterns("/**/v3/api-docs/**");
         interceptorRegistration.excludePathPatterns("/**/login");
         interceptorRegistration.excludePathPatterns("/**/register");
-        interceptorRegistration.excludePathPatterns("/sendMessage");
+        interceptorRegistration.excludePathPatterns("/**sendMessage");
+        interceptorRegistration.excludePathPatterns("/**/favicon.ico");
         //配置拦截策略
         interceptorRegistration.addPathPatterns("/**");
     }
