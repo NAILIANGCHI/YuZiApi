@@ -9,6 +9,7 @@ import com.naraci.app.mapper.DouyinConfigMapper;
 import com.naraci.app.media.entity.request.SrcRequest;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
 import com.naraci.core.aop.CustomException;
+import com.naraci.core.util.UrlUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,7 +62,7 @@ public class MediaService {
 
         DouyinVideoResponse rp = new DouyinVideoResponse();
 
-       String newUrl =  getRedirectUrl(mxUrl);
+       String newUrl =  UrlUtils.getDouYinRedirectUrl(mxUrl);
 
         DouyinConfig douyinConfig = douyinConfigMapper.selectOne(
                 Wrappers.lambdaQuery(DouyinConfig.class)
@@ -70,7 +71,7 @@ public class MediaService {
         String cookieValue = douyinConfig.getCookie();
         String userAgent = douyinConfig.getUserAgent();
 
-        String id = extractVideoId(newUrl);
+        String id = UrlUtils.douYinExtractVideoId(newUrl);
 
         CookieStore cookieStore = new BasicCookieStore();
 
@@ -133,72 +134,5 @@ public class MediaService {
             httpClient.close();
         }
         return rp;
-    }
-
-    /**
-     * 获取重定向地址
-     * @param path
-     * @return
-     * @throws Exception
-     */
-    private String getRedirectUrl(String path) throws Exception {
-
-        // 定义正则表达式
-        String regex = "https?://(?:www\\.|v\\.)douyin\\.com/";
-
-        // 编译正则表达式
-        Pattern pattern = Pattern.compile(regex);
-
-        // 创建 Matcher 对象
-        Matcher matcher = pattern.matcher(path);
-
-        // 查找匹配项
-        if (matcher.find()) {
-            // 获取匹配到的结果
-            String match = matcher.group();
-
-
-            // 判断是 v 还是 www
-            if (match.contains("v")) {
-                HttpURLConnection conn = (HttpURLConnection) new URL(path)
-                        .openConnection();
-                conn.setInstanceFollowRedirects(false);
-                conn.setConnectTimeout(5000);
-                return conn.getHeaderField("Location");
-
-            } else if (match.contains("www")) {
-                return path;
-            } else {
-                throw new CustomException("链接不合法！");
-            }
-        }
-        return null;
-    }
-
-    // 取id
-    private String extractVideoId(String url) {
-        if (url == null) {
-            throw new CustomException("链接不合法！");
-        }
-        Pattern compiledPattern = Pattern.compile("/(\\d+)/?");
-        Matcher matchers = compiledPattern.matcher(url);
-        if (matchers.find()) {
-            return matchers.group(1);
-        } else {
-            // 编译正则表达式
-            Pattern pattern = Pattern.compile("modal_id=(\\d+)");
-
-            // 创建 Matcher 对象
-            Matcher matcher = pattern.matcher(url);
-
-            // 查找匹配项
-            if (matcher.find()) {
-                // 获取匹配到的id
-               return matcher.group(1);
-
-            } else {
-               throw new CustomException("链接不合法");
-            }
-        }
     }
 }
