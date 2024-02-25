@@ -1,4 +1,4 @@
-package com.naraci.app.domain;
+package com.naraci.app.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -9,7 +9,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 抖音配置
+ * 
  * @TableName douyin_config
  */
 @TableName(value ="douyin_config")
@@ -18,7 +18,7 @@ public class DouyinConfig implements Serializable {
     /**
      * 生成时间
      */
-    private Date creatTime;
+    private Date createrTime;
 
     /**
      * 更新时间
@@ -31,7 +31,7 @@ public class DouyinConfig implements Serializable {
     private String cookie;
 
     /**
-     * 头部标识
+     * 头部请求
      */
     private String userAgent;
 

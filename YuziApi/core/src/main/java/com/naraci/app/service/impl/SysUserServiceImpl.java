@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.naraci.app.domain.SysUser;
 import com.naraci.app.entity.response.LoginResponse;
+import com.naraci.app.entity.reuqest.AddUserRequest;
 import com.naraci.app.entity.reuqest.LoginRequest;
 import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
 import com.naraci.app.service.SysUserService;
@@ -24,10 +25,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
-* @author Zhaoyu
-* @description 针对表【sys_user】的数据库操作Service实现
-* @createDate 2024-02-15 11:35:14
-*/
+ * @author Zhaoyu
+ * @description 针对表【sys_user】的数据库操作Service实现
+ * @createDate 2024-02-15 11:35:14
+ */
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService{
 
@@ -108,6 +109,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         loginResponse.setUser(user);
         loginResponse.setToken(token);
         return loginResponse;
+    }
+
+    @Override
+    public void addUser(AddUserRequest request) {
+
     }
 
 }

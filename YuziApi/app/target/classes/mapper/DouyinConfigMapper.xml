@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naraci.app.mapper.DouyinConfigMapper">
+
+    <resultMap id="BaseResultMap" type="com.naraci.app.pojo.DouyinConfig">
+            <result property="createrTime" column="creater_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="cookie" column="cookie" jdbcType="VARCHAR"/>
+            <result property="userAgent" column="user_agent" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        creater_time,update_time,cookie,
+        user_agent
+    </sql>
+</mapper>

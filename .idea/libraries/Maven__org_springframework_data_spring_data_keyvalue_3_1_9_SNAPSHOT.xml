@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.springframework.data:spring-data-keyvalue:3.1.9-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-keyvalue/3.1.9-SNAPSHOT/spring-data-keyvalue-3.1.9-20240215.151847-46.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-keyvalue/3.1.9-SNAPSHOT/spring-data-keyvalue-3.1.9-20240215.151847-46-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/springframework/data/spring-data-keyvalue/3.1.9-SNAPSHOT/spring-data-keyvalue-3.1.9-20240215.151847-46-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

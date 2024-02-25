@@ -1,6 +1,7 @@
 package com.naraci.app.media.web;
 
 import com.naraci.app.media.entity.request.SrcRequest;
+import com.naraci.app.media.entity.response.DouyinImageResponse;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
 import com.naraci.app.media.service.MediaService;
 import com.naraci.core.aop.CustomException;
@@ -32,8 +33,7 @@ public class MediaController {
     @Operation(summary = "抖音无水印视频解析")
     @PostMapping("/douyin/video")
     public DouyinVideoResponse douyinVideo(
-            @RequestBody SrcRequest url
-            ) throws IOException {
+            @RequestBody SrcRequest url) {
         try {
             return mediaService.douyinVideo(url);
         } catch (ConnectException | SocketTimeoutException e) {
@@ -41,5 +41,13 @@ public class MediaController {
         } catch (ClassCastException e) {
             throw new CustomException("解析失败，输入的链接可能不合法");
         }
+    }
+
+    @Operation(summary = "抖音图片解析")
+    @PostMapping("/douyin/image")
+    public DouyinImageResponse douyinImage(
+            @RequestBody SrcRequest url
+    ) {
+        return mediaService.douyinImage(url);
     }
 }

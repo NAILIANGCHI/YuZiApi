@@ -4,10 +4,11 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.naraci.app.domain.DouyinConfig;
 import com.naraci.app.mapper.DouyinConfigMapper;
 import com.naraci.app.media.entity.request.SrcRequest;
+import com.naraci.app.media.entity.response.DouyinImageResponse;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
+import com.naraci.app.pojo.DouyinConfig;
 import com.naraci.core.aop.CustomException;
 import com.naraci.core.util.UrlUtils;
 import jakarta.annotation.Resource;
@@ -134,5 +135,30 @@ public class MediaService {
             httpClient.close();
         }
         return rp;
+    }
+
+    public DouyinImageResponse douyinImage(SrcRequest url) {
+        // 匹配链接的简单正则表达式
+        String regex = "https?://\\S+";
+
+        // 创建 Pattern 对象
+        Pattern pattern = Pattern.compile(regex);
+
+        // 创建 Matcher 对象
+        Matcher matcher = pattern.matcher(url.getUrl());
+
+        String mxUrl = "";
+
+        // 查找匹配的链接
+        if (matcher.find()) {
+            mxUrl = matcher.group();
+        }else {
+            throw new CustomException("输入的链接不合法");
+        }
+
+        DouyinVideoResponse rp = new DouyinVideoResponse();
+
+        return null;
+
     }
 }

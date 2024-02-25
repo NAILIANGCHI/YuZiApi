@@ -1,5 +1,3 @@
-server:
-  port: 9080
 # 数据库连接
 spring:
   profiles:

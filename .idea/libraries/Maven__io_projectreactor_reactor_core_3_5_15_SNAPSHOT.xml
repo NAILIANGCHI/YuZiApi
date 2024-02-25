@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: io.projectreactor:reactor-core:3.5.15-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/projectreactor/reactor-core/3.5.15-SNAPSHOT/reactor-core-3.5.15-20240219.152233-15.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/io/projectreactor/reactor-core/3.5.15-SNAPSHOT/reactor-core-3.5.15-20240219.152233-15-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/io/projectreactor/reactor-core/3.5.15-SNAPSHOT/reactor-core-3.5.15-20240219.152233-15-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

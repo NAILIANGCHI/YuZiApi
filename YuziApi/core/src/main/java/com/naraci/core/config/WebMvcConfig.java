@@ -53,6 +53,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         interceptorRegistration.excludePathPatterns("/**/register");
         interceptorRegistration.excludePathPatterns("/**sendMessage");
         interceptorRegistration.excludePathPatterns("/**/favicon.ico");
+        interceptorRegistration.excludePathPatterns("/**/user/**");
         //配置拦截策略
         interceptorRegistration.addPathPatterns("/**");
     }

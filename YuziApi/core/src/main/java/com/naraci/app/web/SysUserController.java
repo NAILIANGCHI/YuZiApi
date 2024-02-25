@@ -1,6 +1,7 @@
 package com.naraci.app.web;
 
 import com.naraci.app.entity.response.LoginResponse;
+import com.naraci.app.entity.reuqest.AddUserRequest;
 import com.naraci.app.entity.reuqest.LoginRequest;
 import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
 import com.naraci.app.service.SysUserService;
@@ -48,4 +49,14 @@ public class SysUserController {
             ) {
         sysUserService.sendMessage(userInfo);
     }
+
+    @Operation(summary = "新增用户")
+    @PostMapping("/add")
+    public void add(
+            @RequestBody @Valid AddUserRequest request
+    ) {
+        sysUserService.addUser(request);
+    }
+
+
 }
