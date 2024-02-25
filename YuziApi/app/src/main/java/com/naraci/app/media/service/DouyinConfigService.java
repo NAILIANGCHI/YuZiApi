@@ -1,6 +1,6 @@
-package com.naraci.app.service;
+package com.naraci.app.media.service;
 
-import com.naraci.app.pojo.DouyinConfig;
+import com.naraci.app.media.pojo.DouyinConfig;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

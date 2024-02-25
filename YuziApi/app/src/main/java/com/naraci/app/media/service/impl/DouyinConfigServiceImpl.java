@@ -1,9 +1,9 @@
-package com.naraci.app.service.impl;
+package com.naraci.app.media.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.naraci.app.pojo.DouyinConfig;
-import com.naraci.app.service.DouyinConfigService;
-import com.naraci.app.mapper.DouyinConfigMapper;
+import com.naraci.app.media.mapper.DouyinConfigMapper;
+import com.naraci.app.media.pojo.DouyinConfig;
+import com.naraci.app.media.service.DouyinConfigService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class DouyinConfigServiceImpl extends ServiceImpl<DouyinConfigMapper, DouyinConfig>
-    implements DouyinConfigService{
+    implements DouyinConfigService {
 
 }
 

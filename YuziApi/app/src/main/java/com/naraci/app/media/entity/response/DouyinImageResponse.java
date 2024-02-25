@@ -13,7 +13,8 @@ import java.util.List;
 public class DouyinImageResponse {
     @Schema(description = "标题")
     private String title;
-
+    @Schema(description = "背景音乐")
+    private String mp3;
     @Schema(description = "图片列表")
     private List<String> images;
 }

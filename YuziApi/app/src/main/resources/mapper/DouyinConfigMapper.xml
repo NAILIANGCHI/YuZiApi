@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.naraci.app.mapper.DouyinConfigMapper">
+<mapper namespace="com.naraci.app.media.mapper.DouyinConfigMapper">
 
-    <resultMap id="BaseResultMap" type="com.naraci.app.pojo.DouyinConfig">
+    <resultMap id="BaseResultMap" type="com.naraci.app.media.pojo.DouyinConfig">
             <result property="createrTime" column="creater_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="cookie" column="cookie" jdbcType="VARCHAR"/>

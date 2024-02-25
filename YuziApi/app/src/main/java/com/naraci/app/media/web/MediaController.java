@@ -3,7 +3,7 @@ package com.naraci.app.media.web;
 import com.naraci.app.media.entity.request.SrcRequest;
 import com.naraci.app.media.entity.response.DouyinImageResponse;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
-import com.naraci.app.media.service.MediaService;
+import com.naraci.app.media.service.impl.MediaService;
 import com.naraci.core.aop.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,11 +11,9 @@ import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.net.ConnectException;
 
 import java.net.SocketTimeoutException;
-import java.util.List;
 
 /**
  * @author ShenZhaoYu
@@ -47,7 +45,7 @@ public class MediaController {
     @PostMapping("/douyin/image")
     public DouyinImageResponse douyinImage(
             @RequestBody SrcRequest url
-    ) {
+    ) throws Exception {
         return mediaService.douyinImage(url);
     }
 }

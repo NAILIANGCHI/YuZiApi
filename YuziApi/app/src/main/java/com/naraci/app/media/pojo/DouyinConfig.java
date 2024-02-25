@@ -1,4 +1,4 @@
-package com.naraci.app.pojo;
+package com.naraci.app.media.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -9,7 +9,7 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 
+ *
  * @TableName douyin_config
  */
 @TableName(value ="douyin_config")

@@ -128,16 +128,23 @@
         </dependency>
 
         <!--webMagic爬虫-->
+<!--        <dependency>-->
+<!--            <groupId>us.codecraft</groupId>-->
+<!--            <artifactId>webmagic-core</artifactId>-->
+<!--            <version>0.7.3</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>us.codecraft</groupId>-->
+<!--            <artifactId>webmagic-extension</artifactId>-->
+<!--            <version>0.7.3</version>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>us.codecraft</groupId>
-            <artifactId>webmagic-core</artifactId>
-            <version>0.7.3</version>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
         </dependency>
-        <dependency>
-            <groupId>us.codecraft</groupId>
-            <artifactId>webmagic-extension</artifactId>
-            <version>0.7.3</version>
-        </dependency>
+
     </dependencies>
     <build>
         <plugins>

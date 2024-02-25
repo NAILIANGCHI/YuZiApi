@@ -1,6 +1,7 @@
 package com.naraci.core.util;
 
 import com.naraci.core.aop.CustomException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,6 +13,7 @@ import java.util.regex.Pattern;
  * @date 2024/2/22
  *url 工具
  */
+@Slf4j
 public class UrlUtils {
 
     /**
@@ -70,10 +72,8 @@ public class UrlUtils {
         } else {
             // 编译正则表达式
             Pattern pattern = Pattern.compile("modal_id=(\\d+)");
-
             // 创建 Matcher 对象
             Matcher matcher = pattern.matcher(url);
-
             // 查找匹配项
             if (matcher.find()) {
                 // 获取匹配到的id
@@ -82,6 +82,52 @@ public class UrlUtils {
             } else {
                 throw new CustomException("链接不合法");
             }
+        }
+    }
+
+    /**
+     * 抖音图集id获取
+     * @param url
+     * @return
+     */
+    public static String douYinExtractImageId(String url) {
+        if (url == null) {
+            throw new CustomException("链接不合法！");
+        }
+        Pattern pattern = Pattern.compile("(?<=\\/)\\d{19}(?=\\/|$)");
+        Matcher matcher = pattern.matcher(url);
+        // 查找匹配的ID并返回
+        if (matcher.find()) {
+            return matcher.group(0);
+        } else {
+            log.debug(matcher.toString());
+            throw new CustomException("链接不合法");
+        }
+
+    }
+
+    /**
+     * 判断分享链接是否合法
+     * @param url
+     * @return
+     */
+    public static String urlShareIsTrue(String url) {
+        // 匹配链接的简单正则表达式
+        String regex = "https?://\\S+";
+
+        // 创建 Pattern 对象
+        Pattern pattern = Pattern.compile(regex);
+
+        // 创建 Matcher 对象
+        Matcher matcher = pattern.matcher(url);
+
+        String mxUrl = "";
+
+        // 查找匹配的链接
+        if (matcher.find()) {
+            return mxUrl = matcher.group();
+        }else {
+            throw new CustomException("输入的链接不合法");
         }
     }
 }

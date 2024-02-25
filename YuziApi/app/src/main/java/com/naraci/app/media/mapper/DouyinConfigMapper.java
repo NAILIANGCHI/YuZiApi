@@ -1,6 +1,6 @@
-package com.naraci.app.mapper;
+package com.naraci.app.media.mapper;
 
-import com.naraci.app.pojo.DouyinConfig;
+import com.naraci.app.media.pojo.DouyinConfig;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
