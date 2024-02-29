@@ -56,6 +56,10 @@ knife4j:
   setting:
     language: zh_cn
 
+# jwt自定义配置
+jwt:
+  expireTime: 36000000
+  key: 66636naraci
 
 
 logging:

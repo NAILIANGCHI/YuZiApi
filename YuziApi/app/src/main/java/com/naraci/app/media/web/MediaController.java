@@ -48,4 +48,13 @@ public class MediaController {
     ) throws Exception {
         return mediaService.douyinImage(url);
     }
+
+//    @Operation(summary = "皮皮虾视频解析")
+//    @PostMapping("/ppx")
+//    public DouyinVideoResponse ppxVideo(
+////            https://h5.pipix.com/bds/webapi/item/detail/?item_id=7340865145733650728
+//            @RequestBody SrcRequest url
+//    ) throws Exception {
+//        return mediaService.douyinImage(url);
+//    }
 }

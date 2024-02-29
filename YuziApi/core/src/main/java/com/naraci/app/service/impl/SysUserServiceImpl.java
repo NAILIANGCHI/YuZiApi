@@ -12,16 +12,19 @@ import com.naraci.app.service.SysUserService;
 import com.naraci.app.mapper.SysUserMapper;
 import com.naraci.core.aop.CustomException;
 import com.naraci.core.entity.UserInfo;
+import com.naraci.core.util.JwtUtils;
 import com.naraci.core.util.RandomUtils;
 import com.naraci.core.util.RedisUtils;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -34,15 +37,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Resource
     private RedisTemplate<String, SysUser> redisTemplate;
-    @Resource
+    @Autowired
     private RedisTemplate<String, String> redisTemplateCode;
     //获取邮件发送类
-    @Resource
-    JavaMailSender javaMailSender;
-    @Resource
+    @Autowired
+    private JavaMailSender javaMailSender;
+    @Autowired
     private SysUserMapper sysUserMapper;
     @Resource
-    private RedisUtils redisUtils;
+    private JwtUtils jwtUtils;
     @Override
     public void register(SysUserRegisterRequest request) {
 
@@ -103,8 +106,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (!user.getPassword().equals(request.getPassword())) {
             throw new CustomException("密码错误！");
         }
-        String token = "login_" + UUID.randomUUID() + user.getId();
-        redisUtils.addToken(user, token);
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId());
+        map.put("username", user.getName());
+        String token = jwtUtils.createToken(map);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setUser(user);
         loginResponse.setToken(token);

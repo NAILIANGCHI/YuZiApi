@@ -124,6 +124,10 @@ public class MediaService {
     }
 
     public DouyinImageResponse douyinImage(SrcRequest url) throws Exception {
+        int ss = 0;
+        if (ss == 0) {
+            throw new CustomException("维护中。。。");
+        }
         // 判断分享链接是否合法
         String urlOk = UrlUtils.urlShareIsTrue(url.getUrl());
 
@@ -214,6 +218,5 @@ public class MediaService {
             throw new CustomException("解析失败，请联系管理员检修！");
         }
         return null;
-
     }
 }

@@ -1,17 +1,12 @@
 package com.naraci.core.aop;
 
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.naraci.app.domain.SysUser;
-import com.naraci.app.mapper.SysUserMapper;
-import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JsonUtil;
-import com.naraci.core.util.RedisUtils;
+import com.naraci.core.util.JwtUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
-import org.springframework.beans.BeanUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -30,9 +25,7 @@ import java.util.UUID;
 public class TokenInterceptor implements HandlerInterceptor {
 
     @Resource
-    private SysUserMapper sysUserMapper;
-    @Resource
-    private RedisUtils redisUtils;
+    private JwtUtils jwtUtils;
 
     /**
      * 本线程存储计时器
@@ -79,19 +72,16 @@ public class TokenInterceptor implements HandlerInterceptor {
         // 日志信息存放在本线程中
         LOG_INFO.set(sb);
 
-        UserInfo userInfo = new UserInfo();
+        // 令牌验证
         String token = request.getHeader("token");
-        if (token == null) {
-            throw new CustomException("未登录！");
+        try {
+            Map<String, Object> claims = jwtUtils.parseToken(token);
+            return true; //放行
+        } catch (Exception e) {
+            response.setStatus(401);
+            throw new CustomException("未登录");
+//            return false; // 拒绝访问
         }
-        String userId  = redisUtils.requestToken(token);
-        SysUser sysUser = sysUserMapper.selectOne(
-                Wrappers.lambdaQuery(SysUser.class)
-                        .eq(SysUser::getId, userId)
-        );
-        BeanUtils.copyProperties(sysUser, userInfo);
-        request.setAttribute(RedisUtils.token, userInfo);
-        return true;
     }
 
     /**

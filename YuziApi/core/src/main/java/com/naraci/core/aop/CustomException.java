@@ -13,6 +13,7 @@ public class CustomException extends RuntimeException {
     private int code;
     private String msg;
     private Object data;
+
     public CustomException() {
 
     }
