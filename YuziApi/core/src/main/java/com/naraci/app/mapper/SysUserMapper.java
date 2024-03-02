@@ -10,7 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
 * @createDate 2024-02-15 11:35:14
 * @Entity com.naraci.app.domain.SysUser
 */
-@Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 }
 

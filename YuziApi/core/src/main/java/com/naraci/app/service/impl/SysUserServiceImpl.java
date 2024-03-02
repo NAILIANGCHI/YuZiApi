@@ -15,7 +15,9 @@ import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JwtUtils;
 import com.naraci.core.util.RandomUtils;
 import com.naraci.core.util.RedisUtils;
+import com.naraci.core.util.ThreadLocalUtils;
 import jakarta.annotation.Resource;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -23,6 +25,7 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -119,6 +122,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public void addUser(AddUserRequest request) {
 
+    }
+
+    @Override
+    public SysUser userInfo() {
+        Map<String, Object> map = ThreadLocalUtils.get();
+        SysUser sysUser = sysUserMapper.selectById((String) map.get("id"));
+        if (ObjectUtils.isEmpty(sysUser)) {
+            throw new CustomException("用户错误，请重新登录后重试!");
+        }
+        return sysUser;
     }
 
 }

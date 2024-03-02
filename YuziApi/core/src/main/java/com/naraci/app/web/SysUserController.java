@@ -1,11 +1,13 @@
 package com.naraci.app.web;
 
+import com.naraci.app.domain.Role;
+import com.naraci.app.entity.response.ItemVo;
 import com.naraci.app.entity.response.LoginResponse;
 import com.naraci.app.entity.reuqest.AddUserRequest;
 import com.naraci.app.entity.reuqest.LoginRequest;
 import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
+import com.naraci.app.mapper.RoleMapper;
 import com.naraci.app.service.SysUserService;
-import com.naraci.core.config.RedisConfig;
 import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.RedisUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +15,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ShenZhaoYu
@@ -25,6 +30,9 @@ public class SysUserController {
 
     @Autowired
     private SysUserService sysUserService;
+
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Operation(summary = "用户注册")
     @PostMapping("/register")
@@ -58,5 +66,17 @@ public class SysUserController {
         sysUserService.addUser(request);
     }
 
+    @Operation(summary = "查看角色列表")
+    @PostMapping("/role/list")
+    public List<ItemVo> roleList() {
+        List<Role> roleList = roleMapper.findAll();
+
+        return roleList.stream().map(v -> {
+            ItemVo itemVo = new ItemVo();
+            itemVo.setId(v.getId());
+            itemVo.setName(v.getName());
+            return itemVo;
+        }).collect(Collectors.toList());
+    }
 
 }

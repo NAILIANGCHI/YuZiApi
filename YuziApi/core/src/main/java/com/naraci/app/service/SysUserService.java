@@ -7,6 +7,7 @@ import com.naraci.app.entity.reuqest.AddUserRequest;
 import com.naraci.app.entity.reuqest.LoginRequest;
 import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
 import com.naraci.core.entity.UserInfo;
+import org.apache.catalina.User;
 
 /**
 * @author Zhaoyu
@@ -22,4 +23,6 @@ public interface SysUserService extends IService<SysUser> {
     LoginResponse login(LoginRequest request);
 
     void addUser(AddUserRequest request);
+
+    SysUser userInfo();
 }

@@ -19,19 +19,11 @@ spring:
 
 #Mybatis-plus 配置
 mybatis-plus:
-  # 以下配置均有默认值,可以不设置
-  global-config:
-    db-config:
-      #主键类型 AUTO:"数据库ID自增" INPUT:"用户输入ID",ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
-      id-type: auto
-      #字段策略 IGNORED:"忽略判断"  NOT_NULL:"非 NULL 判断")  NOT_EMPTY:"非空判断"
-      field-strategy: NOT_EMPTY
-      #数据库类型
-      db-type: MYSQL
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: com.naraci.app.domain
   configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-  mapper-locations: Classpath*:/mapper/*.xml
-  type-aliases-package: com.naraci
+    map-underscore-to-camel-case: true
+
 
 
 # springdoc-openapi项目配置

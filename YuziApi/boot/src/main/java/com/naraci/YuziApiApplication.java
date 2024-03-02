@@ -5,9 +5,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Configuration;
 
-@MapperScan("com.naraci.**.mapper")
 @Configuration
 @SpringBootApplication(scanBasePackages = "com.naraci")
+@MapperScan({"com.naraci.app.mapper","com.naraci.**.mapper"})
 public class YuziApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(YuziApiApplication.class, args);

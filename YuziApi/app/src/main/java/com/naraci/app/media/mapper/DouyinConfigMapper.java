@@ -1,7 +1,8 @@
 package com.naraci.app.media.mapper;
 
-import com.naraci.app.media.pojo.DouyinConfig;
+import com.naraci.app.media.domain.DouyinConfig;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Mapper;
 
 /**
 * @author Zhaoyu

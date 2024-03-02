@@ -5,12 +5,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.naraci.app.media.domain.DouyinCount;
+import com.naraci.app.domain.SysUser;
+import com.naraci.app.media.mapper.DouyinCountMapper;
+import com.naraci.app.mapper.SysUserMapper;
 import com.naraci.app.media.mapper.DouyinConfigMapper;
 import com.naraci.app.media.entity.request.SrcRequest;
 import com.naraci.app.media.entity.response.DouyinImageResponse;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
-import com.naraci.app.media.pojo.DouyinConfig;
+import com.naraci.app.media.domain.DouyinConfig;
 import com.naraci.core.aop.CustomException;
+import com.naraci.core.util.ThreadLocalUtils;
 import com.naraci.core.util.UrlUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +25,8 @@ import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 
 import java.io.BufferedReader;
@@ -31,6 +38,7 @@ import java.net.URL;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -39,10 +47,16 @@ import java.util.List;
  */
 @Service
 @Slf4j
+@CrossOrigin
 public class MediaService {
     @Resource
     private DouyinConfigMapper douyinConfigMapper;
+    @Resource
+    private SysUserMapper sysUserMapper;
+    @Resource
+    private DouyinCountMapper douyinCountMapper;
 
+    @Transactional
     public DouyinVideoResponse douyinVideo(SrcRequest url) throws Exception {
 
         String mxUrl = UrlUtils.urlShareIsTrue(url.getUrl());
@@ -120,6 +134,20 @@ public class MediaService {
             // 关闭连接
             httpClient.close();
         }
+        Map<String, Object> map = ThreadLocalUtils.get();
+        SysUser sysUser = sysUserMapper.selectById((String) map.get("id"));
+        if (sysUser == null) {
+            throw new CustomException("用户错误！");
+        }
+        DouyinCount douyinCount = douyinCountMapper.selectOne(
+                Wrappers.lambdaQuery(DouyinCount.class)
+                        .eq(DouyinCount::getUserId, sysUser.getId())
+        );
+        if (douyinCount.getCount() <= 0) {
+            throw new CustomException("您的解析次数已用尽！");
+        }
+        douyinCount.setCount(douyinCount.getCount()-1);
+        douyinCountMapper.updateById(douyinCount);
         return rp;
     }
 

@@ -2,6 +2,7 @@ package com.naraci.core.aop;
 
 import com.naraci.core.util.JsonUtil;
 import com.naraci.core.util.JwtUtils;
+import com.naraci.core.util.ThreadLocalUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -76,11 +77,11 @@ public class TokenInterceptor implements HandlerInterceptor {
         String token = request.getHeader("token");
         try {
             Map<String, Object> claims = jwtUtils.parseToken(token);
+            ThreadLocalUtils.set(claims);
             return true; //放行
         } catch (Exception e) {
             response.setStatus(401);
             throw new CustomException("未登录");
-//            return false; // 拒绝访问
         }
     }
 
@@ -94,6 +95,8 @@ public class TokenInterceptor implements HandlerInterceptor {
      */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+        // 清空ThreadLocal
+        ThreadLocalUtils.remove();
         if (!CorsUtils.isPreFlightRequest(request)) {
             this.printLog(request);
         }
