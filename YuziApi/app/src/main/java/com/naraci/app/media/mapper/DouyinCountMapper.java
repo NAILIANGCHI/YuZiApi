@@ -2,6 +2,7 @@ package com.naraci.app.media.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.naraci.app.media.domain.DouyinCount;
+import org.apache.ibatis.annotations.Select;
 
 /**
 * @author Zhaoyu
@@ -11,6 +12,8 @@ import com.naraci.app.media.domain.DouyinCount;
 */
 public interface DouyinCountMapper extends BaseMapper<DouyinCount> {
 
+    @Select("select * from douyin_count where user_id = #{id} and is_deleted = 0")
+    DouyinCount selectByUserId(String id);
 }
 
 

@@ -42,6 +42,10 @@ springdoc:
     - group: '视频解析服务'
       paths-to-match: '/**'
       packages-to-scan: com.naraci.app.media
+
+    - group: '管理员操作服务'
+      paths-to-match: '/**'
+      packages-to-scan: com.naraci.app.AdminManage
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true
@@ -50,7 +54,7 @@ knife4j:
 
 # jwt自定义配置
 jwt:
-  expireTime: 36000000
+  expireTime: 2629800000
   key: 66636naraci
 
 
