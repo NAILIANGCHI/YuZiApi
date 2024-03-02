@@ -3,6 +3,7 @@ package com.naraci.app.media.web;
 import com.naraci.app.media.entity.request.SrcRequest;
 import com.naraci.app.media.entity.response.DouyinImageResponse;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
+import com.naraci.app.media.entity.response.WeiBoHotResponse;
 import com.naraci.app.media.service.impl.MediaService;
 import com.naraci.core.aop.CustomException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,9 +12,11 @@ import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.net.ConnectException;
 
 import java.net.SocketTimeoutException;
+import java.util.List;
 
 /**
  * @author ShenZhaoYu
@@ -47,6 +50,12 @@ public class MediaController {
             @RequestBody SrcRequest url
     ) throws Exception {
         return mediaService.douyinImage(url);
+    }
+
+    @Operation(summary = "微博热搜前20")
+    @GetMapping("weibo")
+    public List<WeiBoHotResponse> weibo() throws IOException {
+       return mediaService.weibo();
     }
 
 //    @Operation(summary = "皮皮虾视频解析")

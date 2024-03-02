@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.naraci.app.media.domain.DouyinCount;
 import com.naraci.app.domain.SysUser;
+import com.naraci.app.media.entity.response.WeiBoHotResponse;
 import com.naraci.app.media.mapper.DouyinCountMapper;
 import com.naraci.app.mapper.SysUserMapper;
 import com.naraci.app.media.mapper.DouyinConfigMapper;
@@ -16,6 +17,7 @@ import com.naraci.app.media.entity.response.DouyinVideoResponse;
 import com.naraci.app.media.domain.DouyinConfig;
 import com.naraci.core.aop.CustomException;
 import com.naraci.core.util.ThreadLocalUtils;
+import com.naraci.core.util.TimeUtils;
 import com.naraci.core.util.UrlUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +38,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -193,7 +197,7 @@ public class MediaService {
 
             //获取响应代码
             int responseCode = connection.getResponseCode();
-            if (responseCode ==HttpURLConnection.HTTP_OK) {
+            if (responseCode == HttpURLConnection.HTTP_OK) {
                 // 创建BufferedReader 对象读取
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 StringBuilder response = new StringBuilder();
@@ -246,5 +250,73 @@ public class MediaService {
             throw new CustomException("解析失败，请联系管理员检修！");
         }
         return null;
+    }
+
+    public List<WeiBoHotResponse> weibo() throws IOException {
+        // 定义 返回列表
+        List<WeiBoHotResponse> weiBoHotResponses = new ArrayList<>();
+        String url = "https://weibo.com/ajax/side/hotSearch";
+        // 打开链接
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("GET");
+
+        int responseCode = connection.getResponseCode();
+
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            // 创建buffRead对象读取
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+
+            StringBuilder response = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                response.append(line);
+            }
+            bufferedReader.close();
+            // 将数据转换成json
+            JsonObject jsonObject = JsonParser.parseString(response.toString()).getAsJsonObject();
+            JsonElement data = jsonObject.get("data");
+            // 将数据转换成对象 为了再次获取热搜对象
+            JsonObject root = data.getAsJsonObject();
+            JsonElement hots = root.getAsJsonArray("realtime");
+            //获取到的目标数组后循环遍历
+            JsonArray hotArrays = hots.getAsJsonArray();
+
+            // 定义大小20个 由于一些数据的字段为null 为了保证数据完整性动态改变个数保证数据值都存在
+            int size = 20;
+            for (int i=1; i<=size;i++) {
+                JsonElement objIndex = hotArrays.get(i);
+                WeiBoHotResponse wb = new WeiBoHotResponse();
+                wb.setRank(String.valueOf(i));
+                JsonObject entity = objIndex.getAsJsonObject();
+                if (entity.get("word") != null) {
+                    wb.setTitle(entity.get("word").getAsString());
+                } else {
+                    size++;
+                    break;
+                }
+                if (entity.get("num") != null) {
+                    wb.setHot(entity.get("num").getAsString());
+                } else {
+                    size++;
+                    break;
+                }
+                if (entity.get("category") != null) {
+                    wb.setType(entity.get("category").getAsString());
+                } else {
+                    size++;
+                    break;
+                }
+                if (entity.get("onboard_time") != null) {
+                    LocalDateTime time = TimeUtils.ofEpochSecond(entity.get("onboard_time").getAsLong());
+                    wb.setTime(time);
+                }else {
+                    size++;
+                    break;
+                }
+                weiBoHotResponses.add(wb);
+            }
+        }
+        return weiBoHotResponses;
     }
 }
