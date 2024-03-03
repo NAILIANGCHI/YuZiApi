@@ -54,7 +54,7 @@ knife4j:
 
 # jwt自定义配置
 jwt:
-  expireTime: 2629800000
+  expireTime: 259200
   key: 66636naraci
 
 

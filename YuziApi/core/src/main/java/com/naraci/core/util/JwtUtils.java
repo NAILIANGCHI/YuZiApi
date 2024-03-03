@@ -20,6 +20,8 @@ public class JwtUtils {
     @Value("${jwt.expireTime}")
     private long time;
 
+    public static final String TOKEN = "token";
+
 
 
     // 生成jwt代码
@@ -38,5 +40,13 @@ public class JwtUtils {
                 .verify(token)
                 .getClaim("claims")
                 .asMap();
+    }
+
+    /**
+     * 获取token值
+     */
+
+    public void responseToken() {
+
     }
 }

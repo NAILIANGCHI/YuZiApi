@@ -73,6 +73,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public void sendMessage(UserInfo userInfo) {
+
         String emailAddress = userInfo.getEmail();
         //初始化邮件信息类
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -125,9 +126,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
-    public SysUser userInfo() {
-        Map<String, Object> map = ThreadLocalUtils.get();
-        SysUser sysUser = sysUserMapper.selectById((String) map.get("id"));
+    public SysUser userInfo(UserInfo userInfo) {
+        SysUser sysUser = sysUserMapper.selectById(userInfo.getId());
         if (ObjectUtils.isEmpty(sysUser)) {
             throw new CustomException("用户错误，请重新登录后重试!");
         }

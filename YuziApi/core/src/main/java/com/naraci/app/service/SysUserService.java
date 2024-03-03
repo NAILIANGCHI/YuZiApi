@@ -24,5 +24,5 @@ public interface SysUserService extends IService<SysUser> {
 
     void addUser(AddUserRequest request);
 
-    SysUser userInfo();
+    SysUser userInfo(UserInfo userInfo);
 }

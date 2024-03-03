@@ -9,6 +9,7 @@ import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
 import com.naraci.app.mapper.RoleMapper;
 import com.naraci.app.service.SysUserService;
 import com.naraci.core.entity.UserInfo;
+import com.naraci.core.util.JwtUtils;
 import com.naraci.core.util.RedisUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -53,7 +54,7 @@ public class SysUserController {
     @Operation(summary = "发送验证码")
     @PostMapping("/sendMessage")
     public void sendMessage(
-            @RequestAttribute(RedisUtils.token)UserInfo userInfo
+            @RequestAttribute(JwtUtils.TOKEN)UserInfo userInfo
             ) {
         sysUserService.sendMessage(userInfo);
     }

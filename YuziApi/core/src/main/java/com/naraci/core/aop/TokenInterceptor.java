@@ -1,5 +1,9 @@
 package com.naraci.core.aop;
 
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.naraci.app.domain.SysUser;
+import com.naraci.app.mapper.SysUserMapper;
+import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JsonUtil;
 import com.naraci.core.util.JwtUtils;
 import com.naraci.core.util.ThreadLocalUtils;
@@ -8,10 +12,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StopWatch;
+import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,6 +34,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 
     @Resource
     private JwtUtils jwtUtils;
+    @Resource
+    private SysUserMapper sysUserMapper;
 
     /**
      * 本线程存储计时器
@@ -78,6 +87,15 @@ public class TokenInterceptor implements HandlerInterceptor {
         try {
             Map<String, Object> claims = jwtUtils.parseToken(token);
             ThreadLocalUtils.set(claims);
+
+            SysUser sysUser = sysUserMapper.selectById((Serializable) claims.get("id"));
+            if (ObjectUtils.isEmpty(sysUser)) {
+                throw new CustomException("用户错误，请重新登录后重试!");
+            }
+            UserInfo userInfo = new UserInfo();
+            BeanUtils.copyProperties(sysUser, userInfo);
+            // 对jwt 解析存入userinfo
+            request.setAttribute(JwtUtils.TOKEN, userInfo);
             return true; //放行
         } catch (Exception e) {
             response.setStatus(401);
