@@ -10,7 +10,6 @@ import com.naraci.app.mapper.RoleMapper;
 import com.naraci.app.service.SysUserService;
 import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JwtUtils;
-import com.naraci.core.util.RedisUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -79,5 +78,4 @@ public class SysUserController {
             return itemVo;
         }).collect(Collectors.toList());
     }
-
 }

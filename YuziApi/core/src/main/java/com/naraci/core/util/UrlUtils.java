@@ -3,8 +3,12 @@ package com.naraci.core.util;
 import com.naraci.core.aop.CustomException;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.net.ssl.*;
+import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.cert.X509Certificate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -129,5 +133,65 @@ public class UrlUtils {
         }else {
             throw new CustomException("输入的链接不合法");
         }
+    }
+
+    /**
+     * 忽略ssl
+     * @throws Exception
+     */
+
+    public static void ignoreSSL() throws Exception {
+        TrustManager[] trustAllCerts = new TrustManager[] {
+                new X509TrustManager() {
+                    public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+                    public void checkClientTrusted(X509Certificate[] certs, String authType) {}
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {}
+                }
+        };
+
+        // Install the all-trusting trust manager
+        SSLContext sc = SSLContext.getInstance("SSL");
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+
+        // Create all-trusting host name verifier
+        HostnameVerifier allHostsValid = new HostnameVerifier() {
+            public boolean verify(String hostname, SSLSession session) {
+                return true;
+            }
+        };
+
+        // Install the all-trusting host verifier
+        HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+    }
+
+    /**
+     * url 重定向
+     * @param originalUrl
+     * @return
+     */
+    public static String getRedirectedURL(String originalUrl) {
+        try {
+            URL url = new URL(originalUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(false);
+            int responseCode = connection.getResponseCode();
+            if (responseCode >= 300 && responseCode < 400) {
+                String redirectedUrl = connection.getHeaderField("Location");
+                if (redirectedUrl != null) {
+                    // 确保重定向后的URL以"https://"开头
+                    if (!redirectedUrl.startsWith("https://")) {
+                        // 如果不是以"https://"开头，则替换为"https://"
+                        redirectedUrl = "https://" + redirectedUrl.substring(redirectedUrl.indexOf("://") + 3);
+                    }
+                    return redirectedUrl;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return originalUrl; // 如果没有重定向，则返回原始URL
     }
 }
