@@ -23,6 +23,10 @@ mybatis-plus:
   type-aliases-package: com.naraci.app.domain
   configuration:
     map-underscore-to-camel-case: true
+    # 如果查询结果中包含空值的列，则 MyBatis 在映射的时候，不会映射这个字段
+    call-setters-on-nulls: true
+    # 这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 
 
@@ -35,6 +39,10 @@ springdoc:
   api-docs:
     path: /v3/api-docs
   group-configs:
+    - group: '资源爬取基础服务'
+      paths-to-match: '/**'
+      packages-to-scan: com.naraci.app.BaseServer
+
     - group: '用户系统服务'
       paths-to-match: '/**'
       packages-to-scan: com.naraci.app.web
