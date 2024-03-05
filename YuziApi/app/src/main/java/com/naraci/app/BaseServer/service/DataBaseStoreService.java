@@ -1,31 +1,38 @@
 package com.naraci.app.BaseServer.service;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.naraci.app.BaseServer.domain.ImageAcg;
 import com.naraci.app.BaseServer.mapper.ImageAcgMapper;
 import com.naraci.app.media.entity.request.SrcRequest;
 import com.naraci.core.aop.CustomException;
 import com.naraci.core.util.StringUtils;
+import com.naraci.core.util.UrlUtils;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.URL;
+import java.nio.file.Watchable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author ShenZhaoYu
  * @date 2024/3/5
  */
 @Service
+@Slf4j
 public class DataBaseStoreService {
 
     private String localUrl = "https://www.ciyuanjie.cn";
@@ -99,6 +106,55 @@ public class DataBaseStoreService {
             e.printStackTrace();
         } finally {
             executorService.shutdown(); // 关闭线程池
+        }
+    }
+
+    @Transactional
+    public void examine() {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        try {
+            List<String> imageAcgs = imageAcgMapper.selectList(
+                            Wrappers.lambdaQuery(ImageAcg.class)
+                                    .select(ImageAcg::getUrl)
+                    ).stream()
+                    .map(ImageAcg::getUrl)
+                    .toList();
+
+            List<String> link200 = new ArrayList<>();
+            List<String> link404 = new ArrayList<>();
+
+            // 提交任务给线程池
+            for (String url : imageAcgs) {
+                executorService.submit(() -> {
+                    try {
+                        boolean resurlt = UrlUtils.is404(url);
+                        if (resurlt) {
+//                            imageAcgMapper.delete(Wrappers.lambdaQuery(ImageAcg.class).eq(ImageAcg::getUrl, url));
+                            imageAcgMapper.deletedByUrl(url);
+                            log.error("不能访问:" + url);
+                            link404.add(url);
+                        } else {
+                            link200.add(url);
+//                            log.info("能访问:" + url);
+                        }
+                    } catch (ConnectException e) {
+                        log.error("访问链接失败:" + url);
+                    } catch (IOException e) {
+                        log.error("IO异常:" + e.getMessage());
+                    }
+                });
+            }
+
+            // 关闭线程池，等待任务执行完成
+            executorService.shutdown();
+            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+
+            // 输出结果
+//            System.out.println("这是能访问的" + link200);
+            System.out.println("=========================================================================");
+            System.out.println("这是不能访问的" + link404);
+        } catch (InterruptedException e) {
+            log.error("线程池等待超时:" + e.getMessage());
         }
     }
 }

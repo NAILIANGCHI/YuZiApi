@@ -17,4 +17,7 @@
         id,is_deleted,create_time,
         update_time,name,url
     </sql>
+    <delete id="deletedByUrl">
+        delete from yuziapi.image_acg where url = #{url}
+    </delete>
 </mapper>

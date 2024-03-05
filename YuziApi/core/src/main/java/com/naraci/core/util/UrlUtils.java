@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import javax.net.ssl.*;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.X509Certificate;
 import java.util.regex.Matcher;
@@ -193,5 +192,13 @@ public class UrlUtils {
             e.printStackTrace();
         }
         return originalUrl; // 如果没有重定向，则返回原始URL
+    }
+
+    public static boolean is404(String url) throws IOException {
+        URL newUrl = new URL(url);
+        HttpURLConnection httpURLConnection = (HttpURLConnection) newUrl.openConnection();
+        int codeState = httpURLConnection.getResponseCode();
+
+        return codeState == HttpURLConnection.HTTP_NOT_FOUND;
     }
 }

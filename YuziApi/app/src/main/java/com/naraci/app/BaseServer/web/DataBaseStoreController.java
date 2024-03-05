@@ -25,4 +25,11 @@ public class DataBaseStoreController {
     public void imageAcg(@RequestBody SrcRequest request) throws IOException, InterruptedException {
         dataBaseStoreService.imageAcg(request);
     }
+
+
+    @Operation(summary = "处理不能访问的链接")
+    @PostMapping("/examine")
+    public void examineUrl() throws IOException {
+        dataBaseStoreService.examine();
+    }
 }
