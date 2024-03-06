@@ -2,6 +2,9 @@ package com.naraci.app.BaseServer.mapper;
 
 import com.naraci.app.BaseServer.domain.ImageAcg;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author Zhaoyu
@@ -12,6 +15,9 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 public interface ImageAcgMapper extends BaseMapper<ImageAcg> {
 
     void deletedByUrl(String url);
+
+    @Select("SELECT url FROM image_acg ORDER BY RAND() LIMIT #{number};")
+    List<ImageAcg> listRandomUrl(Integer number);
 }
 
 
