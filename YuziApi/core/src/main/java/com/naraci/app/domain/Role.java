@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.naraci.app.entity.enums.RoleEnum;
 import com.naraci.core.util.IdUtil;
 import lombok.Data;
 
@@ -20,7 +21,7 @@ public class Role implements Serializable {
      * 唯一id
      */
     @TableId
-    private String id = IdUtil.getSnowflakeId();
+    private String id;
 
     /**
      * 是否删除
@@ -30,7 +31,7 @@ public class Role implements Serializable {
     /**
      * 角色
      */
-    private String role;
+    private RoleEnum.RoleEnums role;
 
     /**
      * 角色名称

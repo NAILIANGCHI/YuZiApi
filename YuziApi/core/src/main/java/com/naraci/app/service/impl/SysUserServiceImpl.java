@@ -3,29 +3,31 @@ package com.naraci.app.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.naraci.app.BaseServer.domain.UserRole;
+import com.naraci.app.BaseServer.mapper.UserRoleMapper;
+import com.naraci.app.domain.Role;
 import com.naraci.app.domain.SysUser;
+import com.naraci.app.entity.enums.RoleEnum;
 import com.naraci.app.entity.response.LoginResponse;
 import com.naraci.app.entity.reuqest.AddUserRequest;
 import com.naraci.app.entity.reuqest.LoginRequest;
 import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
+import com.naraci.app.mapper.RoleMapper;
 import com.naraci.app.service.SysUserService;
 import com.naraci.app.mapper.SysUserMapper;
 import com.naraci.core.aop.CustomException;
 import com.naraci.core.entity.UserInfo;
-import com.naraci.core.util.JwtUtils;
-import com.naraci.core.util.RandomUtils;
-import com.naraci.core.util.RedisUtils;
-import com.naraci.core.util.ThreadLocalUtils;
+import com.naraci.core.util.*;
 import jakarta.annotation.Resource;
-import org.apache.catalina.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +38,7 @@ import java.util.concurrent.TimeUnit;
  * @createDate 2024-02-15 11:35:14
  */
 @Service
+@Slf4j
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService{
 
     @Resource
@@ -49,6 +52,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private SysUserMapper sysUserMapper;
     @Resource
     private JwtUtils jwtUtils;
+
+    @Resource
+    private RoleMapper roleMapper;
+    @Resource
+    private UserRoleMapper userRoleMapper;
     @Override
     public void register(SysUserRegisterRequest request) {
 
@@ -74,7 +82,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public void sendMessage(UserInfo userInfo) {
 
-        String emailAddress = userInfo.getEmail();
+        String emailAddress = userInfo.getSysUser().getEmail();
         //初始化邮件信息类
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setSubject("YuZiTool注册");
@@ -110,9 +118,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if (!user.getPassword().equals(request.getPassword())) {
             throw new CustomException("密码错误！");
         }
+
+        UserRole userRole = userRoleMapper.selectByUserid(user.getId());
+        if(ObjectUtils.isEmpty(userRole)) {
+            throw new CustomException("用户角色异常");
+        }
         Map<String, Object> map = new HashMap<>();
         map.put("id", user.getId());
-        map.put("username", user.getName());
+        map.put("userRole", userRole.getId());
         String token = jwtUtils.createToken(map);
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setUser(user);
@@ -121,13 +134,31 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     }
 
     @Override
+    @Transactional
     public void addUser(AddUserRequest request) {
+        SysUser sysUser = sysUserMapper.selectByEmail(request.getEmail());
+        if (!ObjectUtils.isEmpty(sysUser)) {
+            throw new CustomException("该邮箱已被注册");
+        }
 
+        SysUser newUser = new SysUser();
+        newUser.setName(request.getName());
+        newUser.setEmail(request.getEmail());
+        newUser.setPassword(request.getPasswd());
+        newUser.setGender(request.getGender());
+        sysUserMapper.insert(newUser);
+
+        UserRole userRole = new UserRole();
+        RoleEnum.RoleEnums enumName = RoleEnum.getEnumByName(request.getRole());
+        userRole.setUserId(newUser.getId());
+        Role role = roleMapper.selectByRole(enumName.name());
+        userRole.setRoleId(role.getId());
+        userRoleMapper.insert(userRole);
     }
 
     @Override
     public SysUser userInfo(UserInfo userInfo) {
-        SysUser sysUser = sysUserMapper.selectById(userInfo.getId());
+        SysUser sysUser = sysUserMapper.selectById(userInfo.getSysUser().getId());
         if (ObjectUtils.isEmpty(sysUser)) {
             throw new CustomException("用户错误，请重新登录后重试!");
         }

@@ -2,6 +2,7 @@ package com.naraci.app.mapper;
 
 import com.naraci.app.domain.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -13,6 +14,12 @@ import java.util.List;
 */
 public interface RoleMapper extends BaseMapper<Role> {
     List<Role> findAll();
+
+    @Select("select * from role where role = #{name}")
+    Role selectByRole(String name);
+
+    @Select("SELECT * FROM role WHERE id = #{roleId}")
+    Role selectId(String roleId);
 }
 
 

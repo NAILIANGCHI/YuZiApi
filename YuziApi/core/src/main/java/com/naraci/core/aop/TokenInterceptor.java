@@ -1,11 +1,18 @@
 package com.naraci.core.aop;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.naraci.app.BaseServer.domain.UserRole;
+import com.naraci.app.BaseServer.mapper.UserRoleMapper;
+import com.naraci.app.domain.Role;
 import com.naraci.app.domain.SysUser;
+import com.naraci.app.entity.enums.RoleEnum;
+import com.naraci.app.mapper.RoleMapper;
 import com.naraci.app.mapper.SysUserMapper;
+import com.naraci.core.annotation.AccessPostType;
 import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JsonUtil;
 import com.naraci.core.util.JwtUtils;
+import com.naraci.core.util.StringUtils;
 import com.naraci.core.util.ThreadLocalUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,15 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.StopWatch;
-import org.springframework.util.StringUtils;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author ShenZhaoYu
@@ -36,6 +42,10 @@ public class TokenInterceptor implements HandlerInterceptor {
     private JwtUtils jwtUtils;
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private UserRoleMapper userRoleMapper;
+    @Resource
+    private RoleMapper roleMapper;
 
     /**
      * 本线程存储计时器
@@ -82,24 +92,62 @@ public class TokenInterceptor implements HandlerInterceptor {
         // 日志信息存放在本线程中
         LOG_INFO.set(sb);
 
+        HandlerMethod handlerMethod = (HandlerMethod) handler;
+        Class<?> clazz = handlerMethod.getBeanType();
+        Method method = handlerMethod.getMethod();
+
         // 令牌验证
         String token = request.getHeader("token");
+        UserInfo userInfo = new UserInfo();
+        SysUser user = new SysUser();
         try {
             Map<String, Object> claims = jwtUtils.parseToken(token);
             ThreadLocalUtils.set(claims);
-
-            SysUser sysUser = sysUserMapper.selectById((Serializable) claims.get("id"));
+            if (ObjectUtils.isEmpty(claims)) {
+                throw new CustomException("token验证失败");
+            }
+             SysUser sysUser = sysUserMapper.selectById((Serializable) claims.get("id"));
             if (ObjectUtils.isEmpty(sysUser)) {
                 throw new CustomException("用户错误，请重新登录后重试!");
             }
-            UserInfo userInfo = new UserInfo();
-            BeanUtils.copyProperties(sysUser, userInfo);
+            UserRole userRole = userRoleMapper.selectByUserid(sysUser.getId());
+            if (ObjectUtils.isEmpty(userRole)) {
+                throw new CustomException("该账户没有角色 操作失败");
+            }
+            Role role = roleMapper.selectId(userRole.getRoleId());
+            if (ObjectUtils.isEmpty(role)) {
+                throw new CustomException("没有角色信息请联系管理员添加");
+            }
+            BeanUtils.copyProperties(sysUser, user);
+            userInfo.setSysUser(user);
+            userInfo.setRole(role);
             // 对jwt 解析存入userinfo
             request.setAttribute(JwtUtils.TOKEN, userInfo);
+
+            // 添加角色权限控制
+            if (!clazz.isAnnotationPresent(AccessPostType.class) && !method.isAnnotationPresent(AccessPostType.class)) {
+                return true;
+            }
+
+            if (RoleEnum.RoleEnums.Admin.equals(userInfo.getRole().getRole())) {
+                return true;
+            }
+
+            AccessPostType accessPostType = handlerMethod.getMethod().getAnnotation(AccessPostType.class);
+            if (accessPostType == null) {
+                accessPostType = handlerMethod.getMethod().getDeclaringClass().getAnnotation(AccessPostType.class);
+            }
+
+            if (!Arrays.stream(accessPostType.value()).toList()
+                    .contains(userInfo.getRole().getRole())) {
+                throw new CustomException(402, "该无此接口权限(岗位)");
+            }
+
             return true; //放行
         } catch (Exception e) {
             response.setStatus(401);
-            throw new CustomException("未登录");
+//            throw new CustomException("未登录");
+            throw new CustomException(e.getMessage());
         }
     }
 

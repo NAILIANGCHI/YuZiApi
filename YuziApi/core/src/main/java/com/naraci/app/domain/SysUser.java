@@ -1,8 +1,11 @@
 package com.naraci.app.domain;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -26,12 +29,14 @@ public class SysUser implements Serializable {
     /**
      * 创建时间
      */
-    private Date createTime;
+    @TableField(fill = FieldFill.INSERT)
+    private Date createTime = new Date();
 
     /**
      *
      */
-    private Date updateTime;
+    @TableField(fill = FieldFill.UPDATE)
+    private Date updateTime = new Date();
 
     /**
      * 名字
@@ -69,6 +74,7 @@ public class SysUser implements Serializable {
     @JsonIgnore
     private String password;
 
+    @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

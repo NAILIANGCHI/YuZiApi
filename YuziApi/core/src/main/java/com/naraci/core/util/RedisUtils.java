@@ -4,13 +4,10 @@ package com.naraci.core.util;
 import com.naraci.app.domain.SysUser;
 import com.naraci.core.aop.CustomException;
 import jakarta.annotation.Resource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.UUID;
 
 /**
  * @author ShenZhaoYu

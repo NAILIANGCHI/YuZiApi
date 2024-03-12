@@ -1,6 +1,7 @@
 package com.naraci.app.web;
 
 import com.naraci.app.domain.Role;
+import com.naraci.app.entity.enums.RoleEnum;
 import com.naraci.app.entity.response.ItemVo;
 import com.naraci.app.entity.response.LoginResponse;
 import com.naraci.app.entity.reuqest.AddUserRequest;
@@ -8,6 +9,7 @@ import com.naraci.app.entity.reuqest.LoginRequest;
 import com.naraci.app.entity.reuqest.SysUserRegisterRequest;
 import com.naraci.app.mapper.RoleMapper;
 import com.naraci.app.service.SysUserService;
+import com.naraci.core.annotation.AccessPostType;
 import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,6 +61,7 @@ public class SysUserController {
     }
 
     @Operation(summary = "新增用户")
+    @AccessPostType(RoleEnum.RoleEnums.Admin)
     @PostMapping("/add")
     public void add(
             @RequestBody @Valid AddUserRequest request

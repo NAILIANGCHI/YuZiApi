@@ -2,6 +2,7 @@ package com.naraci.core.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.util.Map;
  * @date 2024/2/29
  */
 @Component
+@Slf4j
 public class JwtUtils {
     @Value("${jwt.key}")
     private String jwtKey;
@@ -35,18 +37,20 @@ public class JwtUtils {
 
     // 验证 token
     public Map<String, Object> parseToken(String token) {
-        return JWT.require(Algorithm.HMAC256(jwtKey))
-                .build()
-                .verify(token)
-                .getClaim("claims")
-                .asMap();
-    }
-
-    /**
-     * 获取token值
-     */
-
-    public void responseToken() {
-
+        try {
+            Date timeEx = JWT.require(Algorithm.HMAC256(jwtKey))
+                    .build()
+                    .verify(token)
+                    .getExpiresAt();
+            log.info(timeEx.toString());
+            return JWT.require(Algorithm.HMAC256(jwtKey))
+                    .build()
+                    .verify(token)
+                    .getClaim("claims")
+                    .asMap();
+        }catch (Exception e) {
+            log.info("token验证失败");
+            return null;
+        }
     }
 }
