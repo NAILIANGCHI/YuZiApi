@@ -316,6 +316,9 @@ public class MediaService {
                 }
                 weiBoHotResponses.add(wb);
             }
+            if (weiBoHotResponses.size() < 20) {
+                weiBoHotResponses = weibo();
+            }
         }
         return weiBoHotResponses;
     }

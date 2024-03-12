@@ -12,7 +12,6 @@ import com.naraci.core.annotation.AccessPostType;
 import com.naraci.core.entity.UserInfo;
 import com.naraci.core.util.JsonUtil;
 import com.naraci.core.util.JwtUtils;
-import com.naraci.core.util.StringUtils;
 import com.naraci.core.util.ThreadLocalUtils;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,8 +27,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.stream.Collectors;
-
 /**
  * @author ShenZhaoYu
  * @date 2024/2/17
@@ -146,8 +143,8 @@ public class TokenInterceptor implements HandlerInterceptor {
             return true; //放行
         } catch (Exception e) {
             response.setStatus(401);
-//            throw new CustomException("未登录");
-            throw new CustomException(e.getMessage());
+            throw new CustomException("登录失效");
+//            throw new CustomException(e.getMessage());
         }
     }
 

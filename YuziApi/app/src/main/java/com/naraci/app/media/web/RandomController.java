@@ -3,6 +3,7 @@ package com.naraci.app.media.web;
 import com.naraci.app.media.service.impl.RandomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ import java.util.List;
  * @date 2024/3/6
  */
 @RestController
+@Tag(name = "随机api")
 public class RandomController {
     @Autowired
     private RandomService randomService;
