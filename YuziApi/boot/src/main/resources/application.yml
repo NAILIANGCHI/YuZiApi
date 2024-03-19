@@ -54,6 +54,10 @@ springdoc:
     - group: '管理员操作服务'
       paths-to-match: '/**'
       packages-to-scan: com.naraci.app.AdminManage
+
+    - group: '微信机器人配置'
+      paths-to-match: '/**'
+      packages-to-scan: com.naraci.app.WechatRobot.controller
 # knife4j的增强配置，不需要增强可以不配
 knife4j:
   enable: true

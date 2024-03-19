@@ -48,8 +48,8 @@ public class UrlUtils {
                         .openConnection();
                 conn.setInstanceFollowRedirects(false);
                 conn.setConnectTimeout(5000);
+                System.out.println(conn.getHeaderField("Location"));
                 return conn.getHeaderField("Location");
-
             } else if (match.contains("www")) {
                 return path;
             } else {

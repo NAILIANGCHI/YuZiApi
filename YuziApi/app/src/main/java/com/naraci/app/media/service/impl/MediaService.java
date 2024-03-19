@@ -1,10 +1,7 @@
 package com.naraci.app.media.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.naraci.app.media.domain.DouyinCount;
 import com.naraci.app.domain.SysUser;
 import com.naraci.app.media.entity.response.WeiBoHotResponse;
@@ -28,7 +25,7 @@ import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.cookie.BasicClientCookie;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 
 import java.io.BufferedReader;
@@ -40,7 +37,6 @@ import java.net.URL;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -51,7 +47,6 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-@CrossOrigin
 public class MediaService {
     @Resource
     private DouyinConfigMapper douyinConfigMapper;
@@ -67,7 +62,7 @@ public class MediaService {
 
         DouyinVideoResponse rp = new DouyinVideoResponse();
 
-       String newUrl =  UrlUtils.getDouYinRedirectUrl(mxUrl);
+        String newUrl = UrlUtils.getDouYinRedirectUrl(mxUrl);
 
         DouyinConfig douyinConfig = douyinConfigMapper.selectOne(
                 Wrappers.lambdaQuery(DouyinConfig.class)
@@ -134,7 +129,7 @@ public class MediaService {
 
         } catch (ClassCastException e) {
             throw new CustomException("解析失败，输入的链接可能不合法");
-        }finally {
+        } finally {
             // 关闭连接
             httpClient.close();
         }
@@ -150,7 +145,7 @@ public class MediaService {
         if (douyinCount.getCount() <= 0) {
             throw new CustomException("您的解析次数已用尽！");
         }
-        douyinCount.setCount(douyinCount.getCount()-1);
+        douyinCount.setCount(douyinCount.getCount() - 1);
         douyinCountMapper.updateById(douyinCount);
         return rp;
     }
@@ -164,7 +159,7 @@ public class MediaService {
         String urlOk = UrlUtils.urlShareIsTrue(url.getUrl());
 
         DouyinImageResponse rp = new DouyinImageResponse();
-        String newUrl =  UrlUtils.getDouYinRedirectUrl(urlOk);
+        String newUrl = UrlUtils.getDouYinRedirectUrl(urlOk);
         // 将图集id取出来
         String id = UrlUtils.douYinExtractImageId(newUrl);
 
@@ -183,7 +178,7 @@ public class MediaService {
                 .build();
 
         try {
-            String uUrl = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?reflow_source=reflow_page&item_ids="+id+"&a_bogus=DyMOgOZJMsR1Xj3Cdwkz9Htm54W0YW40gZEzYr%2FdMtL9";
+            String uUrl = "https://www.iesdouyin.com/web/api/v2/aweme/iteminfo/?reflow_source=reflow_page&item_ids=" + id + "&a_bogus=DyMOgOZJMsR1Xj3Cdwkz9Htm54W0YW40gZEzYr%2FdMtL9";
             URL spUrl = new URL(uUrl);
 
             HttpURLConnection connection = (HttpURLConnection) spUrl.openConnection();
@@ -228,7 +223,7 @@ public class MediaService {
                 JsonArray jsonUrlList = jsMain.get("images").getAsJsonArray();
                 JsonArray jsonUrlArrays = jsonUrlList.getAsJsonArray();
                 List<String> imageList = new ArrayList<>();
-                for (int i=0; i < jsonUrlArrays.size(); i++) {
+                for (int i = 0; i < jsonUrlArrays.size(); i++) {
                     JsonElement jsIndex = jsonUrlArrays.get(i);
                     JsonObject urlList = jsIndex.getAsJsonObject();
                     if (urlList.size() > 0) {
@@ -237,7 +232,7 @@ public class MediaService {
                         imageList.add(urlImage);
                         System.out.println(urlImage);
                     }
-                 }
+                }
                 rp.setTitle(title);
                 rp.setMp3(mp3);
                 rp.setImages(imageList);
@@ -284,7 +279,7 @@ public class MediaService {
 
             // 定义大小20个 由于一些数据的字段为null 为了保证数据完整性动态改变个数保证数据值都存在
             int size = 20;
-            for (int i=1; i<=size;i++) {
+            for (int i = 1; i <= size; i++) {
                 JsonElement objIndex = hotArrays.get(i);
                 WeiBoHotResponse wb = new WeiBoHotResponse();
                 wb.setRank(String.valueOf(i));
@@ -310,7 +305,7 @@ public class MediaService {
                 if (entity.get("onboard_time") != null) {
                     LocalDateTime time = TimeUtils.ofEpochSecond(entity.get("onboard_time").getAsLong());
                     wb.setTime(time);
-                }else {
+                } else {
                     size++;
                     break;
                 }

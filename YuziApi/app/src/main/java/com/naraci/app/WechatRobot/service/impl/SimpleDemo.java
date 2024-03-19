@@ -1,4 +1,4 @@
-package demo1;
+package com.naraci.app.WechatRobot.service.impl;
 
 import com.naraci.app.WechatRobot.api.MessageTools;
 import com.naraci.app.WechatRobot.beans.BaseMsg;
@@ -13,7 +13,7 @@ import com.naraci.app.media.entity.response.WeiBoHotResponse;
 import com.naraci.app.media.service.impl.MediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -29,14 +29,11 @@ import java.util.List;
  *
  */
 @Slf4j
-@Component
+@Service
 public class SimpleDemo implements IMsgHandlerFace {
-//	Logger LOG = Logger.getLogger(SimpleDemo.class);
-
 	@Autowired
 	private MediaService mediaService;
 	private final String folderDir = FolderUtils.folderDirName();
-
 
 	@Override
 	public String textMsgHandle(BaseMsg msg) throws Exception {
@@ -57,6 +54,7 @@ public class SimpleDemo implements IMsgHandlerFace {
 			}else if (msg.getText().equals("抖音视频解析")) {
 				return "抖音 + 视频分享文案";
 			} else if (msg.getText().startsWith("抖音")) {
+
 				SrcRequest srcRequest = new SrcRequest();
 				srcRequest.setUrl(msg.getText());
 				DouyinVideoResponse douyinVideoResponse = mediaService.douyinVideo(srcRequest);
