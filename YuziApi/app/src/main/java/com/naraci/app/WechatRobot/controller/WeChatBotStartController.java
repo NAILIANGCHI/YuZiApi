@@ -2,7 +2,7 @@ package com.naraci.app.WechatRobot.controller;
 
 import com.naraci.app.WechatRobot.Wechat;
 import com.naraci.app.WechatRobot.face.IMsgHandlerFace;
-import com.naraci.app.WechatRobot.service.impl.SimpleDemo;
+import com.naraci.app.WechatRobot.service.impl.WechatModelService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -26,7 +26,7 @@ public class WeChatBotStartController {
 
     @Resource
     @Autowired
-    private IMsgHandlerFace simpleDemo = new SimpleDemo();
+    private IMsgHandlerFace simpleDemo = new WechatModelService();
 
     @Operation(summary = "启动机器人")
     @PostMapping("/start")

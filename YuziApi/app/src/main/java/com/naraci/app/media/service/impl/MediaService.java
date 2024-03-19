@@ -133,20 +133,20 @@ public class MediaService {
             // 关闭连接
             httpClient.close();
         }
-        Map<String, Object> map = ThreadLocalUtils.get();
-        SysUser sysUser = sysUserMapper.selectById((String) map.get("id"));
-        if (sysUser == null) {
-            throw new CustomException("用户错误！");
-        }
-        DouyinCount douyinCount = douyinCountMapper.selectOne(
-                Wrappers.lambdaQuery(DouyinCount.class)
-                        .eq(DouyinCount::getUserId, sysUser.getId())
-        );
-        if (douyinCount.getCount() <= 0) {
-            throw new CustomException("您的解析次数已用尽！");
-        }
-        douyinCount.setCount(douyinCount.getCount() - 1);
-        douyinCountMapper.updateById(douyinCount);
+//        Map<String, Object> map = ThreadLocalUtils.get();
+//        SysUser sysUser = sysUserMapper.selectById((String) map.get("id"));
+//        if (sysUser == null) {
+//            throw new CustomException("用户错误！");
+//        }
+//        DouyinCount douyinCount = douyinCountMapper.selectOne(
+//                Wrappers.lambdaQuery(DouyinCount.class)
+//                        .eq(DouyinCount::getUserId, sysUser.getId())
+//        );
+//        if (douyinCount.getCount() <= 0) {
+//            throw new CustomException("您的解析次数已用尽！");
+//        }
+//        douyinCount.setCount(douyinCount.getCount() - 1);
+//        douyinCountMapper.updateById(douyinCount);
         return rp;
     }
 

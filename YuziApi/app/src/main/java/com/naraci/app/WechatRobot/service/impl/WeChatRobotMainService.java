@@ -1,14 +1,8 @@
 package com.naraci.app.WechatRobot.service.impl;
 
-import com.naraci.app.WechatRobot.Wechat;
 import com.naraci.app.WechatRobot.face.IMsgHandlerFace;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import java.io.File;
-
-import static com.naraci.app.WechatRobot.utils.FolderUtils.folderMk;
 
 /**
  *
@@ -18,9 +12,9 @@ import static com.naraci.app.WechatRobot.utils.FolderUtils.folderMk;
  *
  */
 @Component
-public class MyTest {
+public class WeChatRobotMainService {
 	@Autowired
-	private IMsgHandlerFace simpleDemo = new SimpleDemo();
+	private IMsgHandlerFace simpleDemo = new WechatModelService();
 
 //	public void mainWechat() {
 //		String qrPath = "D:\\Zhaoyu\\Chtgpt\\itchat4j-uos\\src\\main\\resources"; // 保存登陆二维码图片的路径，这里需要在本地新建目录

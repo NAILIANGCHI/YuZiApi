@@ -1,11 +1,9 @@
 import com.naraci.app.WechatRobot.beans.BaseMsg;
-import com.naraci.app.WechatRobot.service.impl.SimpleDemo;
+import com.naraci.app.WechatRobot.service.impl.WechatModelService;
 import com.naraci.app.media.entity.response.WeiBoHotResponse;
 import com.naraci.app.media.service.impl.MediaService;
-import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -42,7 +40,7 @@ public class wechatlogin {
     public void douyin() throws Exception {
         BaseMsg baseMsg = new BaseMsg();
         baseMsg.setText("抖音 4.15 复制打开抖音，看看【朝慕的作品】冷知识：输入“好崩溃”抖音会安慰你  https://v.douyin.com/iF9Yauan/ K@w.sr tRk:/ 06/06 ");
-        SimpleDemo simpleDemo = new SimpleDemo();
+        WechatModelService simpleDemo = new WechatModelService();
         String s = simpleDemo.textMsgHandle(baseMsg);
         log.info(s);
     }

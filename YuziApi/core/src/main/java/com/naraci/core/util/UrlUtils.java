@@ -44,12 +44,24 @@ public class UrlUtils {
 
             // 判断是 v 还是 www
             if (match.contains("v")) {
-                HttpURLConnection conn = (HttpURLConnection) new URL(path)
-                        .openConnection();
+                ignoreSSL();
+                HttpURLConnection conn = (HttpURLConnection) new URL(path).openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.setConnectTimeout(5000);
-                System.out.println(conn.getHeaderField("Location"));
-                return conn.getHeaderField("Location");
+                conn.setConnectTimeout(50000);
+                conn.setRequestMethod("GET");
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_MOVED_TEMP
+                        || responseCode == HttpURLConnection.HTTP_MOVED_PERM
+                        || responseCode == HttpURLConnection.HTTP_SEE_OTHER) {
+                    String redirectUrl = conn.getHeaderField("Location");
+                    System.out.println("Redirected to: " + redirectUrl);
+                    return redirectUrl;
+                } else {
+                    // 如果没有重定向，则返回原始URL
+                    System.out.println("No redirection, returning original URL: " + path);
+                    throw  new CustomException("解析异常，请联系管理员");
+                }
             } else if (match.contains("www")) {
                 return path;
             } else {

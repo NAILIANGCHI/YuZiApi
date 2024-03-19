@@ -30,7 +30,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class SimpleDemo implements IMsgHandlerFace {
+public class WechatModelService implements IMsgHandlerFace {
 	@Autowired
 	private MediaService mediaService;
 	private final String folderDir = FolderUtils.folderDirName();
@@ -41,8 +41,10 @@ public class SimpleDemo implements IMsgHandlerFace {
 		if (!msg.isGroupMsg()) {
 			String text = msg.getText();
 			if (text.equals("菜单")) {
-				return "\t \t------菜单------\n抖音视频解析 | 微博热搜前20 \n 输入上面的指令来使用功能";
-			} else if (text.equals("微博热搜前20")) {
+				return "\t \t \t------菜单------" +
+						"\n抖音视频解析 | 微博热搜前20 " +
+						"\n\n 输入上面的指令来使用功能";
+			} else if (text.equals("微博热搜前20") || text.equals("微博")) {
 				List<WeiBoHotResponse> weibo = mediaService.weibo();
 				StringBuilder weiboText = new StringBuilder();
 				for (int i = 0; i < weibo.size(); i++ ) {
@@ -54,12 +56,16 @@ public class SimpleDemo implements IMsgHandlerFace {
 			}else if (msg.getText().equals("抖音视频解析")) {
 				return "抖音 + 视频分享文案";
 			} else if (msg.getText().startsWith("抖音")) {
-
-				SrcRequest srcRequest = new SrcRequest();
-				srcRequest.setUrl(msg.getText());
-				DouyinVideoResponse douyinVideoResponse = mediaService.douyinVideo(srcRequest);
-				return "视频标题:" + douyinVideoResponse.getTitle() + "\n MP3:"
-						+ douyinVideoResponse.getMp3() + "\n 视频链接:" + douyinVideoResponse.getMp4();
+				try {
+					SrcRequest srcRequest = new SrcRequest();
+					srcRequest.setUrl(msg.getText());
+					DouyinVideoResponse douyinVideoResponse = mediaService.douyinVideo(srcRequest);
+					return "视频标题:" + douyinVideoResponse.getTitle() + "\n \n MP3:"
+							+ douyinVideoResponse.getMp3() + "\n \n 视频链接:" + douyinVideoResponse.getMp4();
+				}catch (Exception e) {
+					log.error(e.getMessage());
+					return "解析失败";
+				}
 			}
 		}
 		return null;
