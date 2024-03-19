@@ -11,9 +11,10 @@ import java.util.List;
 
 import static com.naraci.app.WechatRobot.api.WechatTools.getContactNickNameList;
 
+
 public class Wechat {
 	private static final Logger LOG = LoggerFactory.getLogger(Wechat.class);
-	private IMsgHandlerFace msgHandler;
+	private final IMsgHandlerFace msgHandler;
 
 	public Wechat(IMsgHandlerFace msgHandler, String qrPath) {
 		System.setProperty("jsse.enableSNIExtension", "false"); // 防止SSL错误

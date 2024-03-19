@@ -1,6 +1,7 @@
 package com.naraci.app.WechatRobot.face;
 
 import com.naraci.app.WechatRobot.beans.BaseMsg;
+import org.springframework.stereotype.Component;
 
 /**
  * 消息处理接口
@@ -18,7 +19,7 @@ public interface IMsgHandlerFace {
 	 * @param msg
 	 * @return
 	 */
-	public String textMsgHandle(BaseMsg msg);
+	public String textMsgHandle(BaseMsg msg) throws Exception;
 
 	/**
 	 * 处理图片消息
