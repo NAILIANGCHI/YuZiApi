@@ -1,4 +1,4 @@
-package com.naraci.app.BaseServer.domain;
+package com.naraci.app.domain;
 
 import com.baomidou.mybatisplus.annotation.*;
 

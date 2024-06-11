@@ -1,8 +1,8 @@
 package com.naraci.core.aop;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.naraci.app.BaseServer.domain.UserRole;
-import com.naraci.app.BaseServer.mapper.UserRoleMapper;
+import com.naraci.app.domain.UserRole;
+import com.naraci.app.mapper.UserRoleMapper;
 import com.naraci.app.domain.Role;
 import com.naraci.app.domain.SysUser;
 import com.naraci.app.entity.enums.RoleEnum;

@@ -21,7 +21,7 @@ public class CustomException extends RuntimeException {
     public CustomException(String msg) {
         this.code = 1;
         this.msg = msg;
-        this.data = null;
+        this.data = msg;
     }
 
     public CustomException(int code, String msg) {

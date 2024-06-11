@@ -13,6 +13,9 @@ import lombok.Data;
 @TableName(value ="douyin_config")
 @Data
 public class DouyinConfig implements Serializable {
+
+    @TableField
+    private String id;
     /**
      * 生成时间
      */

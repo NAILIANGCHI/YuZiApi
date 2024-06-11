@@ -85,7 +85,7 @@ public class MediaService {
 
             // 创建请求并设置 URI
             HttpURLConnection connection = (HttpURLConnection) spUrl.openConnection();
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod("POST");
             // 设置请求头
             connection.setRequestProperty("User-Agent", userAgent);
             connection.setRequestProperty("Accept", "application/json");
@@ -107,7 +107,7 @@ public class MediaService {
 
                 // 解析 JSON 数据
                 JsonObject jsonObject = JsonParser.parseString(response.toString()).getAsJsonObject();
-
+                System.out.println(response.toString());
                 // 获取 "play_addr" 中的 JsonObject
                 JsonObject jsonMain = jsonObject.getAsJsonObject("aweme_detail");
                 JsonObject jsonMusic = jsonMain.getAsJsonObject("music");
@@ -151,10 +151,10 @@ public class MediaService {
     }
 
     public DouyinImageResponse douyinImage(SrcRequest url) throws Exception {
-        int ss = 0;
-        if (ss == 0) {
-            throw new CustomException("维护中。。。");
-        }
+//        int ss = 0;
+//        if (ss == 0) {
+//            throw new CustomException("维护中。。。");
+//        }
         // 判断分享链接是否合法
         String urlOk = UrlUtils.urlShareIsTrue(url.getUrl());
 
@@ -185,10 +185,12 @@ public class MediaService {
 
             connection.setRequestMethod("GET");
 
+            String ref = "https://www.douyin.com/note/" + id;
             //设置请求头
             connection.setRequestProperty("User-Agent", userAgent);
             connection.setRequestProperty("Accept", "application/json");
             connection.setRequestProperty("Cookie", cookieValue);
+            connection.setRequestProperty("Referer",ref);
 
             //获取响应代码
             int responseCode = connection.getResponseCode();
@@ -226,7 +228,7 @@ public class MediaService {
                 for (int i = 0; i < jsonUrlArrays.size(); i++) {
                     JsonElement jsIndex = jsonUrlArrays.get(i);
                     JsonObject urlList = jsIndex.getAsJsonObject();
-                    if (urlList.size() > 0) {
+                    if (!urlList.isEmpty()) {
                         JsonArray urlImages = urlList.get("url_list").getAsJsonArray();
                         String urlImage = urlImages.get(0).getAsString();
                         imageList.add(urlImage);
@@ -287,26 +289,22 @@ public class MediaService {
                 if (entity.get("word") != null) {
                     wb.setTitle(entity.get("word").getAsString());
                 } else {
-                    size++;
                     break;
                 }
                 if (entity.get("num") != null) {
                     wb.setHot(entity.get("num").getAsString());
                 } else {
-                    size++;
                     break;
                 }
                 if (entity.get("category") != null) {
                     wb.setType(entity.get("category").getAsString());
                 } else {
-                    size++;
                     break;
                 }
                 if (entity.get("onboard_time") != null) {
                     LocalDateTime time = TimeUtils.ofEpochSecond(entity.get("onboard_time").getAsLong());
                     wb.setTime(time);
                 } else {
-                    size++;
                     break;
                 }
                 weiBoHotResponses.add(wb);
