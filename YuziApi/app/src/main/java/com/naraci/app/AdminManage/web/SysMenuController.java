@@ -1,8 +1,7 @@
-package com.naraci.app.BaseServer.web;
+package com.naraci.app.AdminManage.web;
 
-import com.naraci.app.BaseServer.domain.SysMenu;
-import com.naraci.app.BaseServer.entity.request.AddMenu;
-import com.naraci.app.BaseServer.service.SysMenuService;
+import com.naraci.app.AdminManage.entity.request.AddMenu;
+import com.naraci.app.AdminManage.service.SysMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -32,5 +31,7 @@ public class SysMenuController {
             ) {
         sysMenuService.addMenu(request);
     }
+
+
 
 }

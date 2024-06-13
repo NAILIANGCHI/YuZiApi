@@ -1,4 +1,4 @@
-package com.naraci.app.AdminManage.service;
+package com.naraci.app.AdminManage.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.naraci.app.domain.SysUser;

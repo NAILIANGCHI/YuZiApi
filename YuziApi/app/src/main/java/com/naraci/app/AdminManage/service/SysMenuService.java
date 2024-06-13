@@ -1,8 +1,8 @@
-package com.naraci.app.BaseServer.service;
+package com.naraci.app.AdminManage.service;
 
-import com.naraci.app.BaseServer.domain.SysMenu;
+import com.naraci.app.AdminManage.domain.SysMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.naraci.app.BaseServer.entity.request.AddMenu;
+import com.naraci.app.AdminManage.entity.request.AddMenu;
 import jakarta.validation.Valid;
 
 /**

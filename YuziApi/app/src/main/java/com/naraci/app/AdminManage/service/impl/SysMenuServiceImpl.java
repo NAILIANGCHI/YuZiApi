@@ -1,11 +1,11 @@
-package com.naraci.app.BaseServer.service.impl;
+package com.naraci.app.AdminManage.service.impl;
 
 import cn.hutool.core.util.ObjUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.naraci.app.BaseServer.domain.SysMenu;
-import com.naraci.app.BaseServer.entity.request.AddMenu;
-import com.naraci.app.BaseServer.service.SysMenuService;
-import com.naraci.app.BaseServer.mapper.SysMenuMapper;
+import com.naraci.app.AdminManage.domain.SysMenu;
+import com.naraci.app.AdminManage.entity.request.AddMenu;
+import com.naraci.app.AdminManage.service.SysMenuService;
+import com.naraci.app.AdminManage.mapper.SysMenuMapper;
 import com.naraci.core.aop.CustomException;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

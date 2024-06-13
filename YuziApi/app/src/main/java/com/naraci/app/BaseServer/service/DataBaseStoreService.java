@@ -133,12 +133,14 @@ public class DataBaseStoreService {
                             link404.add(url);
                         } else {
                             link200.add(url);
-//                            log.info("能访问:" + url);
+                            log.info("能访问:" + url);
                         }
                     } catch (ConnectException e) {
                         log.error("访问链接失败:" + url);
+                        link404.add(url);
                     } catch (IOException e) {
                         log.error("IO异常:" + e.getMessage());
+                        link404.add(url);
                     }
                 });
             }
@@ -151,6 +153,7 @@ public class DataBaseStoreService {
 //            System.out.println("这是能访问的" + link200);
             System.out.println("=========================================================================");
             System.out.println("这是不能访问的" + link404);
+            imageAcgMapper.deleteBatchIds(link404);
         } catch (InterruptedException e) {
             log.error("线程池等待超时:" + e.getMessage());
         }

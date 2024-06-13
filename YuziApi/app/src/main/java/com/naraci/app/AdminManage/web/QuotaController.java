@@ -1,9 +1,8 @@
 package com.naraci.app.AdminManage.web;
 
-import com.naraci.app.AdminManage.service.QuoTaService;
+import com.naraci.app.AdminManage.service.impl.QuoTaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;

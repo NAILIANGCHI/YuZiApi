@@ -1,4 +1,4 @@
-package com.naraci.app.BaseServer.entity.request;
+package com.naraci.app.AdminManage.entity.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
