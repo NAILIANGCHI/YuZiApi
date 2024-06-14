@@ -10,6 +10,8 @@ import com.naraci.core.aop.CustomException;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
 * @author Zhaoyu
 * @description 针对表【sys_menu】的数据库操作Service实现
@@ -24,7 +26,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
     public void addMenu(AddMenu request) {
 
         // 判断该菜单是否存在
-        SysMenu findSysMenu = sysMenuMapper.findMenuNameOrPath(request.getName(),request.getDisplayName());
+        List<SysMenu> findSysMenu = sysMenuMapper.findMenuNameOrPath(request.getName(),request.getDisplayName());
 
         if (!ObjUtil.isEmpty(findSysMenu)) {
             throw new CustomException("菜单名或路径已存在");
