@@ -43,6 +43,20 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         return sysMenuMapper.getMenuList();
 
     }
+
+    @Override
+    public void updateMenCheck(String id) {
+
+        if (id == null) {
+            throw new CustomException("id不能为空");
+        }
+
+        SysMenu sysMenu = sysMenuMapper.selectById(id);
+        System.out.println(sysMenu);
+        boolean isStart = sysMenu.getIsStart();
+        sysMenu.setIsStart(!isStart);
+        sysMenuMapper.updateById(sysMenu);
+    }
 }
 
 

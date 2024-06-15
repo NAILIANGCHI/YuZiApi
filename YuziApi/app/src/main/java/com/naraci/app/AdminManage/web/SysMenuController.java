@@ -37,4 +37,12 @@ public class SysMenuController {
     public List<SysMenu> getMenuList() {
         return sysMenuService.getMenuList();
     }
+
+    @Operation(summary = "更新菜单开关")
+    @PostMapping("/updateMenuCheck/{id}")
+    public void updateMenCheck(
+            @PathVariable String id
+    ) {
+        sysMenuService.updateMenCheck(id);
+    }
 }

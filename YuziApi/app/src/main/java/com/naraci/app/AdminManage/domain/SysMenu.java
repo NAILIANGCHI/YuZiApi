@@ -22,6 +22,11 @@ public class SysMenu implements Serializable {
     private String id = IdUtil.getSnowflakeId();
 
     /**
+     * 是否开启
+     */
+    private Boolean isStart;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)

@@ -17,4 +17,6 @@ public interface SysMenuService extends IService<SysMenu> {
     void addMenu(@Valid AddMenu request);
 
     List<SysMenu> getMenuList();
+
+    void updateMenCheck(String id);
 }
