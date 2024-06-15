@@ -21,4 +21,7 @@
     <select id="findMenuNameOrPath" resultType="com.naraci.app.AdminManage.domain.SysMenu">
         select * from sys_menu where display_name = #{displayName} OR name = #{name}
     </select>
+    <select id="getMenuList" resultType="com.naraci.app.AdminManage.domain.SysMenu">
+        SELECT * FROM `sys_menu`
+    </select>
 </mapper>

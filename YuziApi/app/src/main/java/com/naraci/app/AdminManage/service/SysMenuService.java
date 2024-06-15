@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 /**
 * @author Zhaoyu
 * @description 针对表【sys_menu】的数据库操作Service
@@ -13,4 +15,6 @@ import jakarta.validation.Valid;
 public interface SysMenuService extends IService<SysMenu> {
 
     void addMenu(@Valid AddMenu request);
+
+    List<SysMenu> getMenuList();
 }

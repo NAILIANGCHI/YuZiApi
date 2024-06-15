@@ -13,6 +13,8 @@ import java.util.List;
 */
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
     List<SysMenu> findMenuNameOrPath(String name, String displayName);
+
+    List<SysMenu> getMenuList();
 }
 
 

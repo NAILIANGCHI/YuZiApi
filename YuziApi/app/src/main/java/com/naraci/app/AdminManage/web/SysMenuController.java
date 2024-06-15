@@ -1,15 +1,15 @@
 package com.naraci.app.AdminManage.web;
 
+import com.naraci.app.AdminManage.domain.SysMenu;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
 import com.naraci.app.AdminManage.service.SysMenuService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author ShenZhaoYu
@@ -32,6 +32,9 @@ public class SysMenuController {
         sysMenuService.addMenu(request);
     }
 
-
-
+    @Operation(summary = "获取父菜单列表")
+    @GetMapping("/getMenuList")
+    public List<SysMenu> getMenuList() {
+        return sysMenuService.getMenuList();
+    }
 }

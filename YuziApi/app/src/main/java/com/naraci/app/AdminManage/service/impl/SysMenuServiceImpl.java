@@ -37,6 +37,12 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         sysMenu.setIcon(request.getIcon());
         sysMenuMapper.insert(sysMenu);
     }
+
+    @Override
+    public List<SysMenu> getMenuList() {
+        return sysMenuMapper.getMenuList();
+
+    }
 }
 
 
