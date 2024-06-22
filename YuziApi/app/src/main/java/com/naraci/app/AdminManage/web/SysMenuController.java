@@ -45,4 +45,12 @@ public class SysMenuController {
     ) {
         sysMenuService.updateMenCheck(id);
     }
+
+    @Operation(summary = "删除菜单")
+    @PostMapping("/delMenu/{id}")
+    public void delMenu(
+            @PathVariable String id
+    ) {
+        sysMenuService.delMenu(id);
+    }
 }

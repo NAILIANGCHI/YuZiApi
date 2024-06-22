@@ -52,10 +52,18 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         }
 
         SysMenu sysMenu = sysMenuMapper.selectById(id);
-        System.out.println(sysMenu);
         boolean isStart = sysMenu.getIsStart();
         sysMenu.setIsStart(!isStart);
         sysMenuMapper.updateById(sysMenu);
+    }
+
+    @Override
+    public void delMenu(String id) {
+        SysMenu sysMenu = sysMenuMapper.selectById(id);
+        if (ObjUtil.isEmpty(sysMenu)) {
+            throw new CustomException("删除失败：id不存在");
+        }
+        sysMenuMapper.deleteById(sysMenu);
     }
 }
 

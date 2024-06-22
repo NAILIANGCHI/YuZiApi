@@ -19,4 +19,6 @@ public interface SysMenuService extends IService<SysMenu> {
     List<SysMenu> getMenuList();
 
     void updateMenCheck(String id);
+
+    void delMenu(String id);
 }
