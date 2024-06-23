@@ -1,9 +1,13 @@
 package com.naraci.app.AdminManage.web;
 
+import com.naraci.app.AdminManage.domain.SysChildrenMenu;
 import com.naraci.app.AdminManage.domain.SysMenu;
+import com.naraci.app.AdminManage.entity.request.AddChildrenMenu;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
+import com.naraci.app.AdminManage.service.SysChildrenMenuService;
 import com.naraci.app.AdminManage.service.SysMenuService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
@@ -24,6 +28,9 @@ public class SysMenuController {
     @Resource
     private SysMenuService sysMenuService;
 
+    @Resource
+    private SysChildrenMenuService sysChildrenMenuService;
+
     @Operation(summary = "添加菜单")
     @PostMapping("/add")
     public void addMenu(
@@ -39,7 +46,7 @@ public class SysMenuController {
     }
 
     @Operation(summary = "更新菜单开关")
-    @PostMapping("/updateMenuCheck/{id}")
+    @PostMapping("/update/MenuCheck/{id}")
     public void updateMenCheck(
             @PathVariable String id
     ) {
@@ -52,5 +59,37 @@ public class SysMenuController {
             @PathVariable String id
     ) {
         sysMenuService.delMenu(id);
+    }
+
+    @Operation(summary = "添加子菜单")
+    @PostMapping("/children/addMenu")
+    public void addChildrenMenu(
+            @RequestBody AddChildrenMenu request
+            ) {
+        sysChildrenMenuService.addChildrenMenu(request);
+    }
+
+    @Operation(summary = "更新子菜单那开关")
+    @PostMapping("/update/childrenMenuCheck/{id}")
+    public void updateChildrenMenuCheck(
+            @PathVariable String id
+    ) {
+        sysChildrenMenuService.updateChildrenMenuCheck(id);
+    }
+
+    @Operation(summary = "删除子菜单")
+    @PostMapping("/delChildrenMenu/{id}")
+    public void delChildrenMenu(
+            @PathVariable String id
+    ) {
+        sysChildrenMenuService.delChildrenMenu(id);
+    }
+
+    @Operation(summary = "获取子菜单列表")
+    @PostMapping("/getChildrenMenuList/{id}")
+    public List<SysChildrenMenu> getChildrenMenuList(
+            @PathVariable @Schema(description = "父类菜单id") String id
+    ) {
+       return sysChildrenMenuService.getMenuList(id);
     }
 }

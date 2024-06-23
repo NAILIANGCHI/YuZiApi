@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.naraci.app.AdminManage.mapper.SysChildrenMenuMapper">
+
+    <resultMap id="BaseResultMap" type="com.naraci.app.AdminManage.domain.SysChildrenMenu">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="mainId" column="main_id" jdbcType="VARCHAR"/>
+            <result property="isStart" column="is_start" jdbcType="BIT"/>
+            <result property="displayName" column="display_name" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,create_time,update_time,
+        main_id,is_start,display_name,
+        name
+    </sql>
+    <select id="findMenuNameOrPath" resultType="com.naraci.app.AdminManage.domain.SysMenu">
+        select * from sys_children_menu where display_name = #{displayName} OR name = #{name}
+    </select>
+</mapper>

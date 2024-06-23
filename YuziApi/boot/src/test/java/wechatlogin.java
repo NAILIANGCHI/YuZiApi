@@ -1,5 +1,3 @@
-import com.naraci.app.WechatRobot.beans.BaseMsg;
-import com.naraci.app.WechatRobot.service.impl.WechatModelService;
 import com.naraci.app.media.entity.response.WeiBoHotResponse;
 import com.naraci.app.media.service.impl.MediaService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +34,12 @@ public class wechatlogin {
         return "url";
     }
 
-    @Test
-    public void douyin() throws Exception {
-        BaseMsg baseMsg = new BaseMsg();
-        baseMsg.setText("抖音 4.15 复制打开抖音，看看【朝慕的作品】冷知识：输入“好崩溃”抖音会安慰你  https://v.douyin.com/iF9Yauan/ K@w.sr tRk:/ 06/06 ");
-        WechatModelService simpleDemo = new WechatModelService();
-        String s = simpleDemo.textMsgHandle(baseMsg);
-        log.info(s);
-    }
+//    @Test
+//    p ublic void douyin() throws Exception {
+//        BaseMsg baseMsg = new BaseMsg();
+//        baseMsg.setText("抖音 4.15 复制打开抖音，看看【朝慕的作品】冷知识：输入“好崩溃”抖音会安慰你  https://v.douyin.com/iF9Yauan/ K@w.sr tRk:/ 06/06 ");
+//        WechatModelService simpleDemo = new WechatModelService();
+//        String s = simpleDemo.textMsgHandle(baseMsg);
+//        log.info(s);
+//    }
 }
