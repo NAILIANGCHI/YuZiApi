@@ -4,6 +4,7 @@ import com.naraci.app.AdminManage.domain.SysMenu;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.naraci.app.AdminManage.entity.request.AddChildrenMenu;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
+import com.naraci.app.AdminManage.entity.response.MenuRouter;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -22,4 +23,6 @@ public interface SysMenuService extends IService<SysMenu> {
     void updateMenCheck(String id);
 
     void delMenu(String id);
+
+    List<MenuRouter> getMenuRouter();
 }

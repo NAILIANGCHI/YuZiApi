@@ -4,6 +4,7 @@ import com.naraci.app.AdminManage.domain.SysChildrenMenu;
 import com.naraci.app.AdminManage.domain.SysMenu;
 import com.naraci.app.AdminManage.entity.request.AddChildrenMenu;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
+import com.naraci.app.AdminManage.entity.response.MenuRouter;
 import com.naraci.app.AdminManage.service.SysChildrenMenuService;
 import com.naraci.app.AdminManage.service.SysMenuService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -91,5 +92,11 @@ public class SysMenuController {
             @PathVariable @Schema(description = "父类菜单id") String id
     ) {
        return sysChildrenMenuService.getMenuList(id);
+    }
+
+    @Operation(summary = "获取菜单导航")
+    @GetMapping("/router")
+    public List<MenuRouter> getMenuRouter() {
+        return sysMenuService.getMenuRouter();
     }
 }

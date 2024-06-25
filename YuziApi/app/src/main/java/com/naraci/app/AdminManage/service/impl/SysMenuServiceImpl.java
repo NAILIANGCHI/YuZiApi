@@ -1,17 +1,25 @@
 package com.naraci.app.AdminManage.service.impl;
 
 import cn.hutool.core.util.ObjUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.naraci.app.AdminManage.domain.SysChildrenMenu;
 import com.naraci.app.AdminManage.domain.SysMenu;
 import com.naraci.app.AdminManage.entity.request.AddChildrenMenu;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
+import com.naraci.app.AdminManage.entity.response.ChildrenMenu;
+import com.naraci.app.AdminManage.entity.response.MenuRouter;
+import com.naraci.app.AdminManage.mapper.SysChildrenMenuMapper;
 import com.naraci.app.AdminManage.service.SysMenuService;
 import com.naraci.app.AdminManage.mapper.SysMenuMapper;
 import com.naraci.core.aop.CustomException;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
 * @author Zhaoyu
@@ -23,6 +31,8 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
     implements SysMenuService{
 
     @Resource SysMenuMapper sysMenuMapper;
+    @Resource
+    private SysChildrenMenuMapper sysChildrenMenuMapper;
     @Override
     public void addMenu(AddMenu request) {
 
@@ -65,6 +75,37 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
             throw new CustomException("删除失败：id不存在");
         }
         sysMenuMapper.deleteById(sysMenu);
+    }
+
+    @Override
+    public List<MenuRouter> getMenuRouter() {
+        // 获取全部主菜单
+        List<SysMenu> menuList = sysMenuMapper.getMenuList();
+
+        // 获取子菜单
+        List<SysChildrenMenu> sysChildrenMenuList = sysChildrenMenuMapper.selectList(
+                Wrappers.lambdaQuery()
+        );
+
+        Map<String, List<SysChildrenMenu>> sysMenuServiceMap = sysChildrenMenuList.stream().collect(Collectors.groupingBy(SysChildrenMenu::getMainId));
+        return menuList.stream().map(item -> {
+            MenuRouter menuRouter = new MenuRouter();
+//            menuRouter.setId(item.getId());
+            menuRouter.setKey(item.getName());
+            menuRouter.setLabel(item.getDisplayName());
+            menuRouter.setIcon(item.getIcon());
+            if (!ObjUtil.isEmpty(sysMenuServiceMap.get(item.getId()))) {
+                List<SysChildrenMenu> sysChildrenMenuList1 = sysMenuServiceMap.get(item.getId());
+                List<ChildrenMenu> childrenMenus = sysChildrenMenuList1.stream().map(childrenItem -> {
+                    ChildrenMenu childrenMenu = new ChildrenMenu();
+                    childrenMenu.setLabel(childrenItem.getDisplayName());
+                    childrenMenu.setKey(childrenItem.getName());
+                    return childrenMenu;
+                }).toList();
+                menuRouter.setChildren(childrenMenus);
+            }
+            return menuRouter;
+        }).toList();
     }
 }
 
