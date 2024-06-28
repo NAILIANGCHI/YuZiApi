@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.naraci.app.AdminManage.domain.SysChildrenMenu;
 import com.naraci.app.AdminManage.domain.SysMenu;
-import com.naraci.app.AdminManage.entity.request.AddChildrenMenu;
 import com.naraci.app.AdminManage.entity.request.AddMenu;
 import com.naraci.app.AdminManage.entity.response.ChildrenMenu;
 import com.naraci.app.AdminManage.entity.response.MenuRouter;
@@ -16,7 +15,6 @@ import com.naraci.core.aop.CustomException;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

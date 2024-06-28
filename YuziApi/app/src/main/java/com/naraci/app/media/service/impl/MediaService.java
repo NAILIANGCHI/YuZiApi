@@ -2,8 +2,7 @@ package com.naraci.app.media.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.gson.*;
-import com.naraci.app.media.domain.DouyinCount;
-import com.naraci.app.domain.SysUser;
+
 import com.naraci.app.media.entity.response.WeiBoHotResponse;
 import com.naraci.app.media.mapper.DouyinCountMapper;
 import com.naraci.app.mapper.SysUserMapper;
@@ -13,7 +12,6 @@ import com.naraci.app.media.entity.response.DouyinImageResponse;
 import com.naraci.app.media.entity.response.DouyinVideoResponse;
 import com.naraci.app.media.domain.DouyinConfig;
 import com.naraci.core.aop.CustomException;
-import com.naraci.core.util.ThreadLocalUtils;
 import com.naraci.core.util.TimeUtils;
 import com.naraci.core.util.UrlUtils;
 import jakarta.annotation.Resource;
@@ -38,7 +36,6 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 
 /**

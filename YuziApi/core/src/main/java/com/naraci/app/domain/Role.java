@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.naraci.app.entity.enums.RoleEnum;
-import com.naraci.core.util.IdUtil;
 import lombok.Data;
 
 /**

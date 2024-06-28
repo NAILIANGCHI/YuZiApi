@@ -4,9 +4,6 @@ import com.naraci.app.domain.Role;
 import com.naraci.app.domain.SysUser;
 import lombok.Data;
 
-import java.util.Date;
-import java.util.Random;
-
 /**
  * @author ShenZhaoYu
  * @date 2024/2/17

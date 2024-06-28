@@ -17,6 +17,13 @@
     <packaging>pom</packaging>
 
 
+    <modules>
+        <module>core</module>
+        <module>app</module>
+        <module>boot</module>
+    </modules>
+
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -53,6 +60,7 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
+            <version>8.2.0</version>
         </dependency>
 
 
@@ -125,7 +133,7 @@
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
-            <version>1.8.3</version>
+            <version>1.15.3</version>
         </dependency>
 
         <!--jwt令牌依赖-->
@@ -153,14 +161,14 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.3</version>
+            <version>4.5.13</version>
         </dependency>
 
         <dependency>
@@ -173,7 +181,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.31</version>
+            <version>1.2.83</version> <!-- 替换为最新版本 -->
         </dependency>
 
 
@@ -198,25 +206,47 @@
             <version>1.1.1</version>
         </dependency>
     </dependencies>
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <image>-->
+<!--                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>-->
+<!--                    </image>-->
+<!--                    <excludes>-->
+<!--                        <exclude>-->
+<!--                            <groupId>org.projectlombok</groupId>-->
+<!--                            <artifactId>lombok</artifactId>-->
+<!--                        </exclude>-->
+<!--                    </excludes>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
                 <configuration>
-                    <image>
-                        <builder>paketobuildpacks/builder-jammy-base:latest</builder>
-                    </image>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
+                    <source>17</source>
+                    <target>17</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <skipTests>true</skipTests>    <!--默认关掉单元测试 -->
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
     <repositories>
         <repository>
             <id>spring-milestones</id>

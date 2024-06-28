@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.naraci.core.source.Snowflake;
 import com.naraci.core.util.IdUtil;
 import lombok.Data;
 

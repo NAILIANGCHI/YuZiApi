@@ -1,12 +1,15 @@
 package com.naraci.app.AdminManage.domain;
 
-import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.naraci.core.util.IdUtil;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
-import com.naraci.core.util.IdUtil;
-import lombok.Data;
 
 /**
  * 

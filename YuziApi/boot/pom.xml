@@ -6,22 +6,25 @@
         <groupId>com.naraci</groupId>
         <artifactId>YuziApi</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>
+
     </parent>
 
     <artifactId>boot</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
         <dependency>
             <groupId>com.naraci</groupId>
             <artifactId>app</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
+        <!-- 引入 core 模块作为依赖 -->
         <dependency>
             <groupId>com.naraci</groupId>
             <artifactId>core</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
@@ -36,8 +39,12 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 
 </project>
