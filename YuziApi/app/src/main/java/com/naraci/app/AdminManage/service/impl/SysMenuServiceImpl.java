@@ -72,6 +72,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         if (ObjUtil.isEmpty(sysMenu)) {
             throw new CustomException("删除失败：id不存在");
         }
+        List<SysChildrenMenu> sysChildrenMenuList = sysChildrenMenuMapper.selectList(
+                Wrappers.lambdaQuery(SysChildrenMenu.class)
+                        .eq(SysChildrenMenu::getMainId, id)
+        );
+        if (!ObjUtil.isEmpty(sysChildrenMenuList)) {
+            throw new CustomException("删除失败,该菜单有子类");
+        }
         sysMenuMapper.deleteById(sysMenu);
     }
 
