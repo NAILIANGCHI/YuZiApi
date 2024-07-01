@@ -2,6 +2,7 @@ package com.naraci.app.AdminManage.mapper;
 
 import com.naraci.app.AdminManage.domain.SysMenu;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -12,9 +13,10 @@ import java.util.List;
 * @Entity com.naraci.app.AdminManage.domain.SysMenu
 */
 public interface SysMenuMapper extends BaseMapper<SysMenu> {
-    List<SysMenu> findMenuNameOrPath(String name, String displayName);
 
     List<SysMenu> getMenuList();
+
+    List<SysMenu> findMenuNameOrPath(@Param("name") String name, @Param("displayName") String displayName);
 }
 
 

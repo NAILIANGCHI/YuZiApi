@@ -20,6 +20,6 @@
         name
     </sql>
     <select id="findMenuNameOrPath" resultType="com.naraci.app.AdminManage.domain.SysMenu">
-        select * from sys_children_menu where display_name = #{displayName} OR name = #{name}
+        select * from sys_children_menu where name = #{name} OR display_name = #{displayName}
     </select>
 </mapper>
