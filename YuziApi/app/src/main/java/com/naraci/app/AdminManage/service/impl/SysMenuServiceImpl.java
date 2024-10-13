@@ -95,7 +95,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
         Map<String, List<SysChildrenMenu>> sysMenuServiceMap = sysChildrenMenuList.stream().collect(Collectors.groupingBy(SysChildrenMenu::getMainId));
         return menuList.stream().map(item -> {
             MenuRouter menuRouter = new MenuRouter();
-//            menuRouter.setId(item.getId());
             menuRouter.setKey(item.getName());
             menuRouter.setLabel(item.getDisplayName());
             menuRouter.setIcon(item.getIcon());
