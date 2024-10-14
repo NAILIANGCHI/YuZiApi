@@ -23,10 +23,10 @@ public class WpsOnlineService {
         RequestBody body = RequestBody.create(mediaType, "{\"Context\":{\"argv\":{},\"sheet_name\":\"表名\",\"range\":\"A2:AF\"}}");
         Request request = new Request.Builder()
 //                .url("https://www.kdocs.cn/api/v3/ide/file/cbA5u9W7wiyE/script/V2-qj85EXSugSmfLy36EvzX3/sync_task") // 测试环境
-                .url("https://www.kdocs.cn/api/v3/ide/file/cbA5u9W7wiyE/script/V2-qj85EXSugSmfLy36EvzX3/sync_task") // 生成环境
+                .url("https://www.kdocs.cn/api/v3/ide/file/ctoGgbdWW4kZ/script/V2-1WC2LNDfRGOk8VtqmTBDrY/sync_task") // 生成环境
                 .post(body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("AirScript-Token", "6zZRghtfgIYDATZzhwX7lO")// 生成环境token
+                .addHeader("AirScript-Token", "27HJzGLSfGf77HU7AyjFia")// 生成环境token
 //                .addHeader("AirScript-Token", "7xhi9e2nT7M7F4U6DqDqpU")// 测试环境
                 .build();
 
@@ -37,20 +37,22 @@ public class WpsOnlineService {
         }
 
         // 获取响应体
+        assert response.body() != null;
         String responseBody = response.body().string();
 
         // 解析 JSON 响应为 JsonNode
         JsonNode rootNode = objectMapper.readTree(responseBody);
         JsonNode logsNode = rootNode.path("data").path("result");
-//        System.out.println(logsNode);
+        System.out.println(logsNode);
+
 
         // 转换为 WpsAllDataResponse 列表
         List<WpsAllDataResponse> allDataResponses = new ArrayList<>();
         for (JsonNode item : logsNode) {
             WpsAllDataResponse responseItem = new WpsAllDataResponse();
 
-            responseItem.setSerialNumber(item.get(0).asInt(0));  // 假设第 0 个元素为 Serial Number
-            responseItem.setSellerShipmentDate(item.get(1).asText(""));  // 假设第 1 个元素为 Seller Shipment Date
+            responseItem.setSerialNumber(item.get(0).asInt(0));
+            responseItem.setSellerShipmentDate(item.get(1).asText(""));
             responseItem.setCustomerDeliveryTrackingNumber(item.get(2).asText(""));
             responseItem.setCarrierTrackingNumber(item.get(3).asText(""));
             responseItem.setTransferWarehouseInDate(item.get(4).asText(""));
