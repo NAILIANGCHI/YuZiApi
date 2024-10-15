@@ -30,4 +30,12 @@ public class WpsOnlineController {
     public List<WpsAllDataResponse> acgImage() throws IOException {
         return wpsOnlineService.requestAllData();
     }
+
+    @Operation(summary = "打印账单")
+    @PostMapping("/check")
+    public void checkPdf(
+
+    ){
+
+    }
 }

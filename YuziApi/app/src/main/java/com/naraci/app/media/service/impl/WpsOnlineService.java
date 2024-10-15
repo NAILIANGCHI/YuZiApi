@@ -22,12 +22,12 @@ public class WpsOnlineService {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\"Context\":{\"argv\":{},\"sheet_name\":\"表名\",\"range\":\"A2:AF\"}}");
         Request request = new Request.Builder()
-//                .url("https://www.kdocs.cn/api/v3/ide/file/cbA5u9W7wiyE/script/V2-qj85EXSugSmfLy36EvzX3/sync_task") // 测试环境
-                .url("https://www.kdocs.cn/api/v3/ide/file/ctoGgbdWW4kZ/script/V2-1WC2LNDfRGOk8VtqmTBDrY/sync_task") // 生成环境
+                .url("https://www.kdocs.cn/api/v3/ide/file/cbA5u9W7wiyE/script/V2-79oPH3I0t8hewTsA0sSb7X/sync_task") // 测试环境
+//                .url("https://www.kdocs.cn/api/v3/ide/file/ctoGgbdWW4kZ/script/V2-1WC2LNDfRGOk8VtqmTBDrY/sync_task") // 生成环境
                 .post(body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("AirScript-Token", "27HJzGLSfGf77HU7AyjFia")// 生成环境token
-//                .addHeader("AirScript-Token", "7xhi9e2nT7M7F4U6DqDqpU")// 测试环境
+//                .addHeader("AirScript-Token", "27HJzGLSfGf77HU7AyjFia")// 生成环境token
+                .addHeader("AirScript-Token", "6oawqWr5mmCidkgZK1JLKN")// 测试环境
                 .build();
 
         Response response = client.newCall(request).execute();
@@ -43,7 +43,7 @@ public class WpsOnlineService {
         // 解析 JSON 响应为 JsonNode
         JsonNode rootNode = objectMapper.readTree(responseBody);
         JsonNode logsNode = rootNode.path("data").path("result");
-        System.out.println(logsNode);
+        System.out.println(rootNode);
 
 
         // 转换为 WpsAllDataResponse 列表
