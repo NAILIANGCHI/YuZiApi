@@ -15,7 +15,7 @@ import java.math.RoundingMode;
 @Data
 public class WpsAllDataResponse {
     @Schema(description = "序号")
-    private Integer serialNumber;
+    private String serialNumber;
 
     @Schema(description = "卖家发货日期")
     private String sellerShipmentDate;
@@ -55,6 +55,9 @@ public class WpsAllDataResponse {
 
     @Schema(description = "入库单号")
     private String warehousingNumber;
+
+    @Schema(description = "负责人")
+    private String principal;
 
     @Schema(description = "商品名称")
     private String productName;
@@ -109,6 +112,9 @@ public class WpsAllDataResponse {
 
     @Schema(description = "客户付款日期")
     private String customerPaymentDate;
+
+    @Schema(description = "付款主体")
+    private String payBody;
 
     // Setter 方法，用于设置保留两位小数
     public void setValue(double value) {

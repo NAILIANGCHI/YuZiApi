@@ -2,13 +2,11 @@ package com.naraci.app.media.web;
 
 import com.naraci.app.media.entity.response.WpsAllDataResponse;
 import com.naraci.app.media.service.impl.WpsOnlineService;
+import com.naraci.app.media.service.impl.WpsPageDataResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,8 +25,11 @@ public class WpsOnlineController {
     private WpsOnlineService wpsOnlineService;
     @Operation(summary = "获取全部数据")
     @GetMapping("/all")
-    public List<WpsAllDataResponse> acgImage() throws IOException {
-        return wpsOnlineService.requestAllData();
+    public WpsPageDataResponse getAllData(
+            @RequestParam int page,
+            @RequestParam int pageSize
+    ) throws IOException {
+        return wpsOnlineService.requestAllData(page, pageSize);
     }
 
     @Operation(summary = "打印账单")
