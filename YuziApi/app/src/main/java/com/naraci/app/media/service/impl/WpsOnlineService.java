@@ -2,8 +2,11 @@ package com.naraci.app.media.service.impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.naraci.app.media.entity.request.CheckTemplateRequest;
 import com.naraci.app.media.entity.response.WpsAllDataResponse;
 import com.naraci.core.aop.CustomException;
+import com.spire.xls.FileFormat;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -12,14 +15,19 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Service
+@Slf4j
 public class WpsOnlineService {
     // 生产环境
     private final String AllPageDataUrl = "https://www.kdocs.cn/api/v3/ide/file/ctb8HSfxYfih/script/V2-73LnHV8Jjef1ezd8sZMUvw/sync_task";
@@ -106,12 +114,13 @@ public class WpsOnlineService {
             responseItem.setCustomerUnitPrice(item.get(25).asDouble(0.0)); // 使用 Double 类型输入
             responseItem.setCustomerFreight(item.get(26).asDouble(0.0)); // 使用 Double 类型输入
             responseItem.setCustomerShelvingFee(item.get(27).asDouble(0.0)); // 使用 Double 类型输入
-            responseItem.setCustomerMiscellaneousFees(item.get(28).asDouble(0.0)); // 使用 Double 类型输入
-            responseItem.setInsuranceFee(item.get(29).asDouble(0.0)); // 使用 Double 类型输入
-            responseItem.setRemarks(item.get(30).asText(""));
-            responseItem.setCustomerInitialBillingTotal(item.get(31).asDouble(0.0)); // 使用 Double 类型输入
-            responseItem.setCustomerPaymentDate(item.get(32).asText(""));
-            responseItem.setPayBody(item.get(33).asText("N/A"));
+            responseItem.setGoodsCostGet(item.get(28).asDouble(0.0));
+            responseItem.setCustomerMiscellaneousFees(item.get(29).asDouble(0.0)); // 使用 Double 类型输入
+            responseItem.setInsuranceFee(item.get(30).asDouble(0.0)); // 使用 Double 类型输入
+            responseItem.setRemarks(item.get(31).asText(""));
+            responseItem.setCustomerInitialBillingTotal(item.get(32).asDouble(0.0)); // 使用 Double 类型输入
+            responseItem.setCustomerPaymentDate(item.get(33).asText(""));
+            responseItem.setPayBody(item.get(34).asText("N/A"));
 
             allDataResponses.add(responseItem);
         }
@@ -131,22 +140,24 @@ public class WpsOnlineService {
             const pagedData =rowData.slice(startIndex,endIndex); // 分页数据*/
     }
 
-    public void pushWxRobot(String text) {
+    public void pushWxRobot(CheckTemplateRequest obj) {
+        String id = checkPdfFile(obj);
         // 创建 OkHttpClient 实例
         OkHttpClient client = new OkHttpClient();
 
-        // 创建请求体
+        // 去掉引号
+        id = id.replace("\"", "");
+
         String json = String.format("{\n" +
-                "   \"msgtype\": \"text\",\n" +
-                "   \"text\": {\n" +
-                "       \"content\": \"%s\"\n" +
-                "   }\n" +
-                "}", text);
+                "    \"msgtype\": \"file\",\n" +
+                "    \"file\": {\n" +
+                "        \"media_id\": \"%s\"\n" +
+                "    }\n" +
+                "}", id);
 
         // 创建 RequestBody
         MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(mediaType, json);
-
         // 构建请求
         Request request = new Request.Builder()
                 .url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25")
@@ -159,47 +170,163 @@ public class WpsOnlineService {
 
             // 输出响应内容
             assert response.body() != null;
-            System.out.println(response.body().string());
+            log.info(response.body().string());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void pushText(String text) {
-        // Excel 模板路径
-        String templatePath = "src/main/resources/Files";
+    public String checkPdfFile(CheckTemplateRequest object) {
+        // 获取当前日期
+        LocalDate currentDate = LocalDate.now();
+
+        // 定义日期格式化器
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(formatter);
+
+        // 创建写入表格数据列表
+        List<String> results = new ArrayList<>();
+        results.add(formattedDate);
+        results.add(object.getCustomerCode());
+        results.add(object.getWarehousingNumber());
+        results.add("头程费用");
+        results.add(String.valueOf(object.getSkuTotalCount()));
+        results.add(String.valueOf(object.getOriginalWeightAfterWrapping()));
+        results.add(String.valueOf(object.getCustomerUnitPrice()));
+        results.add(String.valueOf(object.getCustomerFreight()));
+        results.add(String.valueOf(object.getCustomerShelvingFee()));
+        results.add("0");
+        results.add(String.valueOf(object.getGoodsCostGet()));
+        results.add("0");
+        results.add(String.valueOf(object.getInsuranceFee()));
+        results.add(String.valueOf(object.getCustomerMiscellaneousFees()));
+        results.add(String.valueOf(object.getCustomerInitialBillingTotal()));
+        results.add(object.getRemarks());
+
         // 输出 Excel 文件路径
-        String outputPath = "src/main/resources/filled_template.xlsx";
+        String outputPath = "yuziapi/file";
+        File fileDirectory = new File(outputPath);
+        if (!fileDirectory.exists()) {
+            fileDirectory.mkdirs();
+        }
+        // Excel 模板路径
+        String templatePath = "yuziapi/template/头程账单模板.xlsx";
+        // 定义输出的文件名
+        String outputFilePath = outputPath + "/头程费用账单-" + formattedDate + "-" + object.getWarehousingNumber() +
+                "-费用合计-" + object.getCustomerInitialBillingTotal() + "元" + ".xlsx";
+        String outputFilePdfPath = outputPath + "/头程费用账单-" + formattedDate + "-" + object.getWarehousingNumber() +
+                "-费用合计-" + object.getCustomerInitialBillingTotal() + "元" + ".pdf";
+        File outputFile = new File(outputFilePath);
+
         try (FileInputStream fileInputStream = new FileInputStream(templatePath);
              Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
             // 获取第一个工作表
             Sheet sheet = workbook.getSheetAt(0);
+            int startRow = 7;  // 从第8行开始
+            int startColumn = 0;  // 从第1列开始
 
-            // 假设要填充第2行，第2列的单元格
-            Row row = sheet.getRow(7); // 第2行（索引从0开始）
+            Row row = sheet.getRow(startRow);
             if (row == null) {
-                row = sheet.createRow(7); // 如果行不存在，创建新行
+                row = sheet.createRow(startRow);
             }
 
-            // 填充数据到第2列的单元格
-            Cell cell = row.getCell(7); // 第2列
-            if (cell == null) {
-                cell = row.createCell(7); // 如果单元格不存在，创建新单元格
+            // 填充15个单元格
+            for (String item : results) {
+                Cell cell = row.getCell(startColumn);
+                if (cell == null) {
+                    cell = row.createCell(startColumn);
+                }
+                cell.setCellValue(item);
+                startColumn++;
             }
-            cell.setCellValue("新的数据");
+            // 单独设置 11列12行
+            Row sumRow = sheet.getRow(11);
+            Cell sumMoney = sumRow.getCell(11);
+            sumMoney.setCellValue(results.get(10));
 
-            // 继续填充其他单元格...
-
-            // 保存修改后的Excel
-            try (FileOutputStream fileOut = new FileOutputStream(outputPath)) {
-                workbook.write(fileOut);
-                System.out.println("模板填充完成并保存为：" + outputPath);
+            // 写入数据到输出文件
+            try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
+                workbook.write(fileOutputStream);
             }
+            Boolean isTrue = convertExcelToPdf(outputFilePath, outputFilePdfPath);
+            if (!isTrue) {
+                throw new CustomException("推送失败");
+            }
+            return mediaId(outputFilePdfPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            outputFile.delete();
+            File pdfFile = new File(outputFilePdfPath);
+            pdfFile.delete();
+        }
 
+        // 返回生成的文件对象
+        return null;
+    }
+
+    public String mediaId(String filePath) throws IOException {
+        // Webhook URL (含key)
+        String url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25&type=file";
+        try {
+            // 调用上传文件方法并打印结果
+            String mediaId = requestMediaResponse(url, filePath);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(mediaId);
+            log.info("Media ID: " + jsonNode.get("media_id"));
+            return String.valueOf(jsonNode.get("media_id"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        return null;
     }
+
+    // 获取media_id
+    public static String requestMediaResponse(String url, String filePath) throws IOException {
+        OkHttpClient client = new OkHttpClient();
+
+        // 创建文件对象
+        File file = new File(filePath);
+
+        // 创建文件的请求体
+        RequestBody fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+
+        // 创建 multipart/form-data 的请求体
+        MultipartBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("media", file.getName(), fileBody)  // "media" 为表单项名称
+                .build();
+
+        // 构建 POST 请求
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        // 执行请求
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected code " + response);
+            }
+
+            // 返回响应体
+            return response.body().string();
+        }
+    }
+
+    public static Boolean convertExcelToPdf(String excelFilePath, String pdfFilePath) {
+        // 加载Excel文档.
+        try {
+            com.spire.xls.Workbook wb = new com.spire.xls.Workbook();
+            wb.loadFromFile(excelFilePath);
+            // 调用方法保存为PDF格式.
+            wb.saveToFile(pdfFilePath, FileFormat.PDF);
+            return true;
+        }catch (Exception e) {
+            throw new CustomException("导出失败!");
+        }
+    }
+
 }
+

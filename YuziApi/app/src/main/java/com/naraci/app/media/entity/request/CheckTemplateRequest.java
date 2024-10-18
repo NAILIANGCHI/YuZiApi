@@ -1,53 +1,51 @@
-//package com.naraci.app.media.entity.request;
-//
-//import io.swagger.v3.oas.annotations.media.Schema;
-//import lombok.Data;
-//
-//@Data
-//
-//public class CheckTemplateRequest {
-//    @Schema(description = "日期")
-//    private Data dataNow;
-//
-//    @Schema(description = "客户代码")
-//    private String clientCode;
-//
-//    @Schema(description = "运单号")
-//    private String waybill;
-//
-//    @Schema(description = "费用项目")
-//    private String costItem;
-//
-//    @Schema(description = "SKU数量")
-//    private String costItem;
-//
-//    @Schema(description = "计费重量")
-//    private String costItem;
-//
-//    @Schema(description = "单价(元)")
-//    private String costItem;
-//
-//    @Schema(description = "金额(元)")
-//    private String costItem;
-//
-//    @Schema(description = "上架费(元)")
-//    private String putAway;
-//
-//    @Schema(description = "报关(元)")
-//    private String clearance;
-//
-//    @Schema(description = "税点")
-//    private String taxPoint;
-//    @Schema(description = "保险(元)")
-//    private String insurance;
-//
-//    @Schema(description = "杂费(元)")
-//    private String incidentals;
-//
-//    @Schema(description = "合计(元)")
-//    private String total;
-//
-//    @Schema(description = "类别")
-//    private String type;
-//
-//}
+package com.naraci.app.media.entity.request;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.math.BigDecimal;
+
+/**
+ * @author ShenZhaoYu
+ * @date 2024/10/13
+ * @描述
+ */
+@Data
+public class CheckTemplateRequest {
+
+    @Schema(description = "客户代码")
+    private String customerCode;
+
+    @Schema(description = "入库单号")
+    private String warehousingNumber;
+
+    @Schema(description = "SKU总数")
+    private Integer skuTotalCount;
+
+    @Schema(description = "原缠后总重量（kg）")
+    private BigDecimal originalWeightAfterWrapping;    // 改为 BigDecimal
+
+    @Schema(description = "客户单价（￥）")
+    private BigDecimal customerUnitPrice;               // 改为 BigDecimal
+
+    @Schema(description = "客户运费（￥）")
+    private BigDecimal customerFreight;                 // 改为 BigDecimal
+
+    @Schema(description = "客户上架费（￥）")
+    private BigDecimal customerShelvingFee;             // 改为 BigDecimal
+
+    @Schema(description = "客户杂费（￥）")
+    private BigDecimal customerMiscellaneousFees;       // 改为 BigDecimal
+
+    @Schema(description = "保险费（￥）")
+    private BigDecimal insuranceFee;                     // 改为 BigDecimal
+
+    @Schema(description = "提货费(￥)")
+    private BigDecimal goodsCostGet;
+
+    @Schema(description = "备注说明")
+    private String remarks;
+
+    @Schema(description = "客户头程账单合计（￥）")
+    private BigDecimal customerInitialBillingTotal;     // 改为 BigDecimal
+}

@@ -1,6 +1,5 @@
 package com.naraci.app.media.entity.response;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -104,6 +103,9 @@ public class WpsAllDataResponse {
     @Schema(description = "保险费（￥）")
     private BigDecimal insuranceFee;                     // 改为 BigDecimal
 
+    @Schema(description = "提货费(￥)")
+    private BigDecimal goodsCostGet;
+
     @Schema(description = "备注说明")
     private String remarks;
 
@@ -159,6 +161,9 @@ public class WpsAllDataResponse {
 
     public void setInsuranceFee(double insuranceFee) {
         this.insuranceFee = BigDecimal.valueOf(insuranceFee).setScale(2, RoundingMode.HALF_UP);
+    }
+    public void setGoodsCostGet(double insuranceFee) {
+        this.goodsCostGet = BigDecimal.valueOf(insuranceFee).setScale(2, RoundingMode.HALF_UP);
     }
 
     public void setCustomerInitialBillingTotal(double customerInitialBillingTotal) {

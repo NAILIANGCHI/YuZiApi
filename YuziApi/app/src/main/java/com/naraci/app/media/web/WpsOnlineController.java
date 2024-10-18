@@ -1,5 +1,6 @@
 package com.naraci.app.media.web;
 
+import com.naraci.app.media.entity.request.CheckTemplateRequest;
 import com.naraci.app.media.service.impl.WpsOnlineService;
 import com.naraci.app.media.service.impl.WpsPageDataResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,7 +34,9 @@ public class WpsOnlineController {
 
     @Operation(summary = "打印账单")
     @PostMapping("/check")
-    public void checkPdf(String text){
-        wpsOnlineService.pushText(text);
+    public void pushWxRobot(
+            @RequestBody CheckTemplateRequest request
+            ){
+        wpsOnlineService.pushWxRobot(request);
     }
 }
