@@ -202,6 +202,7 @@ public class WpsOnlineService {
         results.add(String.valueOf(object.getCustomerMiscellaneousFees()));
         results.add(String.valueOf(object.getCustomerInitialBillingTotal()));
         results.add(object.getRemarks());
+        results.add(object.getPrincipal());
 
         // 输出 Excel 文件路径
         String outputPath = "yuziapi/file";
@@ -237,13 +238,22 @@ public class WpsOnlineService {
                 if (cell == null) {
                     cell = row.createCell(startColumn);
                 }
+                if (startColumn == 16) {
+                    continue;
+                }
                 cell.setCellValue(item);
                 startColumn++;
             }
             // 单独设置 11列12行
+            // 下部合计
             Row sumRow = sheet.getRow(11);
             Cell sumMoney = sumRow.getCell(10);
             sumMoney.setCellValue(results.get(14));
+
+            //设置销售
+            Row peopleRow = sheet.getRow(11);
+            Cell peopleCol = peopleRow.getCell(1);
+            peopleCol.setCellValue(results.get(16));
 
             // 写入数据到输出文件
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {

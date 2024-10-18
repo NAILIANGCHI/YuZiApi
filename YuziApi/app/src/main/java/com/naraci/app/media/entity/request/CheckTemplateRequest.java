@@ -48,4 +48,7 @@ public class CheckTemplateRequest {
 
     @Schema(description = "客户头程账单合计（￥）")
     private BigDecimal customerInitialBillingTotal;     // 改为 BigDecimal
+
+    @Schema(description = "负责人")
+    private String principal;
 }
