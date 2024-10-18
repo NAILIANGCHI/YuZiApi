@@ -242,8 +242,8 @@ public class WpsOnlineService {
             }
             // 单独设置 11列12行
             Row sumRow = sheet.getRow(11);
-            Cell sumMoney = sumRow.getCell(11);
-            sumMoney.setCellValue(results.get(10));
+            Cell sumMoney = sumRow.getCell(10);
+            sumMoney.setCellValue(results.get(14));
 
             // 写入数据到输出文件
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
