@@ -5,8 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.naraci.app.media.entity.response.WpsAllDataResponse;
 import com.naraci.core.aop.CustomException;
 import okhttp3.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -32,8 +39,8 @@ public class WpsOnlineService {
                     .url(url)
                     .post(body)
                     .addHeader("Content-Type", "application/json")
-//                    .addHeader("AirScript-Token", "6fgzLVfeHde8oa1aZwuNEi") // 测试环境Token
-                .addHeader("AirScript-Token", "6EVBnuLPhrivypRvAw48mH") // 生产环境Token
+                    .addHeader("AirScript-Token", "48WgK4eZsSes7NdDkuEGHV") // 测试环境Token
+//                .addHeader("AirScript-Token", "6KB1OjQFfVPn4wGPZsiCE6") // 生产环境Token
                     .build();
             return client.newCall(request).execute();
         }catch (SocketTimeoutException e) {
@@ -45,13 +52,13 @@ public class WpsOnlineService {
     public WpsPageDataResponse requestAllData(int page, int pageSize) throws IOException {
         // 构建请求体，包含分页参数
         String requestBodyContent = String.format(
-//                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程测试\"}}",
-                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程发货明细\"}}",
+                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程测试\"}}",
+//                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程发货明细\"}}",
                 page, pageSize
         );
 
         // 发出请求
-        Response response = wpsRequest(AllPageDataUrl, requestBodyContent);
+        Response response = wpsRequest(AllTestPageDataUrl, requestBodyContent);
         if (!response.isSuccessful()) {
             throw new IOException("错误code " + response);
         }
@@ -109,18 +116,12 @@ public class WpsOnlineService {
             allDataResponses.add(responseItem);
         }
 
-//        System.out.println(pages.findValue("totalPages"));
-//        System.out.println(pages.findValue("currentPage"));
-//        System.out.println(pages.findValue("pageSize"));
-//        System.out.println(pages.findValue("totalRecords"));
-
         WpsPageDataResponse wpsPageDataResponse = new WpsPageDataResponse();
         wpsPageDataResponse.setStartIndex(pages.findValue("currentPage").intValue());
         wpsPageDataResponse.setEndIndex(pages.findValue("pageSize").intValue());
         wpsPageDataResponse.setTotalRecords(pages.findValue("totalRecords").intValue());
         wpsPageDataResponse.setTotalPages(pages.findValue("totalPages").intValue());
         wpsPageDataResponse.setPageData(allDataResponses);
-
         return wpsPageDataResponse;
 
 /*          const totalRecords =rowData.length; // 总记录数
@@ -128,5 +129,77 @@ public class WpsOnlineService {
             const startIndex =(page -1)*pageSize; // 起始索引
             const endIndex =startIndex +pageSize; // 结束索引
             const pagedData =rowData.slice(startIndex,endIndex); // 分页数据*/
+    }
+
+    public void pushWxRobot(String text) {
+        // 创建 OkHttpClient 实例
+        OkHttpClient client = new OkHttpClient();
+
+        // 创建请求体
+        String json = String.format("{\n" +
+                "   \"msgtype\": \"text\",\n" +
+                "   \"text\": {\n" +
+                "       \"content\": \"%s\"\n" +
+                "   }\n" +
+                "}", text);
+
+        // 创建 RequestBody
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(mediaType, json);
+
+        // 构建请求
+        Request request = new Request.Builder()
+                .url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25")
+                .post(body)
+                .build();
+
+        // 发送请求并处理响应
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+            // 输出响应内容
+            assert response.body() != null;
+            System.out.println(response.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void pushText(String text) {
+        // Excel 模板路径
+        String templatePath = "src/main/resources/Files";
+        // 输出 Excel 文件路径
+        String outputPath = "src/main/resources/filled_template.xlsx";
+        try (FileInputStream fileInputStream = new FileInputStream(templatePath);
+             Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+
+            // 获取第一个工作表
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // 假设要填充第2行，第2列的单元格
+            Row row = sheet.getRow(7); // 第2行（索引从0开始）
+            if (row == null) {
+                row = sheet.createRow(7); // 如果行不存在，创建新行
+            }
+
+            // 填充数据到第2列的单元格
+            Cell cell = row.getCell(7); // 第2列
+            if (cell == null) {
+                cell = row.createCell(7); // 如果单元格不存在，创建新单元格
+            }
+            cell.setCellValue("新的数据");
+
+            // 继续填充其他单元格...
+
+            // 保存修改后的Excel
+            try (FileOutputStream fileOut = new FileOutputStream(outputPath)) {
+                workbook.write(fileOut);
+                System.out.println("模板填充完成并保存为：" + outputPath);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }

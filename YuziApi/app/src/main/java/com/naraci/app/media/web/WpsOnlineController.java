@@ -1,6 +1,5 @@
 package com.naraci.app.media.web;
 
-import com.naraci.app.media.entity.response.WpsAllDataResponse;
 import com.naraci.app.media.service.impl.WpsOnlineService;
 import com.naraci.app.media.service.impl.WpsPageDataResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
+
 
 /**
  * @author ShenZhaoYu
@@ -34,9 +33,7 @@ public class WpsOnlineController {
 
     @Operation(summary = "打印账单")
     @PostMapping("/check")
-    public void checkPdf(
-
-    ){
-
+    public void checkPdf(String text){
+        wpsOnlineService.pushText(text);
     }
 }

@@ -143,7 +143,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             return true; //放行
         } catch (Exception e) {
             response.setStatus(401);
-            throw new CustomException("登录失效");
+            throw new CustomException("登录时效");
 //            throw new CustomException(e.getMessage());
         }
     }
