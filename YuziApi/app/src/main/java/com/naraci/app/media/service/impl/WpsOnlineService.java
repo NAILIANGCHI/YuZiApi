@@ -47,8 +47,8 @@ public class WpsOnlineService {
                     .url(url)
                     .post(body)
                     .addHeader("Content-Type", "application/json")
-                    .addHeader("AirScript-Token", "48WgK4eZsSes7NdDkuEGHV") // 测试环境Token
-//                .addHeader("AirScript-Token", "6KB1OjQFfVPn4wGPZsiCE6") // 生产环境Token
+//                    .addHeader("AirScript-Token", "48WgK4eZsSes7NdDkuEGHV") // 测试环境Token
+                .addHeader("AirScript-Token", "6KB1OjQFfVPn4wGPZsiCE6") // 生产环境Token
                     .build();
             return client.newCall(request).execute();
         }catch (SocketTimeoutException e) {
@@ -60,13 +60,13 @@ public class WpsOnlineService {
     public WpsPageDataResponse requestAllData(int page, int pageSize) throws IOException {
         // 构建请求体，包含分页参数
         String requestBodyContent = String.format(
-                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程测试\"}}",
-//                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程发货明细\"}}",
+//                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程测试\"}}",
+                "{\"Context\":{\"argv\":{\"name\":\"zhaoyu\", \"page\": %d, \"pageSize\": %d},\"sheet_name\":\"头程发货明细\"}}",
                 page, pageSize
         );
 
         // 发出请求
-        Response response = wpsRequest(AllTestPageDataUrl, requestBodyContent);
+        Response response = wpsRequest(AllPageDataUrl, requestBodyContent);
         if (!response.isSuccessful()) {
             throw new IOException("错误code " + response);
         }

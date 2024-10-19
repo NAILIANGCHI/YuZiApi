@@ -104,7 +104,7 @@ public class WpsAllDataResponse {
     private BigDecimal insuranceFee;                     // 改为 BigDecimal
 
     @Schema(description = "提货费(￥)")
-    private BigDecimal goodsCostGet;
+    private BigDecimal goodCostGet;
 
     @Schema(description = "备注说明")
     private String remarks;
@@ -163,7 +163,7 @@ public class WpsAllDataResponse {
         this.insuranceFee = BigDecimal.valueOf(insuranceFee).setScale(2, RoundingMode.HALF_UP);
     }
     public void setGoodsCostGet(double insuranceFee) {
-        this.goodsCostGet = BigDecimal.valueOf(insuranceFee).setScale(2, RoundingMode.HALF_UP);
+        this.goodCostGet = BigDecimal.valueOf(insuranceFee).setScale(2, RoundingMode.HALF_UP);
     }
 
     public void setCustomerInitialBillingTotal(double customerInitialBillingTotal) {
