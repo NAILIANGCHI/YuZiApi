@@ -195,9 +195,9 @@ public class WpsOnlineService {
         results.add(String.valueOf(object.getCustomerUnitPrice()));
         results.add(String.valueOf(object.getCustomerFreight()));
         results.add(String.valueOf(object.getCustomerShelvingFee()));
-        results.add("0");
+        results.add("0.00");
         results.add(String.valueOf(object.getGoodCostGet()));
-        results.add("0");
+        results.add("0.00");
         results.add(String.valueOf(object.getInsuranceFee()));
         results.add(String.valueOf(object.getCustomerMiscellaneousFees()));
         results.add(String.valueOf(object.getCustomerInitialBillingTotal()));
