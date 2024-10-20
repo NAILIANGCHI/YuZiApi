@@ -1,6 +1,7 @@
 package com.naraci.app.media.web;
 
 import com.naraci.app.media.entity.request.CheckTemplateRequest;
+import com.naraci.app.media.entity.request.QuotationRequest;
 import com.naraci.app.media.service.impl.WpsOnlineService;
 import com.naraci.app.media.service.impl.WpsPageDataResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,5 +39,13 @@ public class WpsOnlineController {
             @RequestBody CheckTemplateRequest request
             ){
         wpsOnlineService.pushWxRobot(request);
+    }
+
+    @Operation(summary = "报价图片单生成")
+    @PostMapping("/quotation")
+    public void quotation(
+            @RequestBody QuotationRequest request
+    ){
+        wpsOnlineService.quotation(request);
     }
 }

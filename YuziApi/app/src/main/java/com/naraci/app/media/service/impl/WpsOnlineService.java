@@ -3,6 +3,8 @@ package com.naraci.app.media.service.impl;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.naraci.app.media.entity.request.CheckTemplateRequest;
+import com.naraci.app.media.entity.request.DynamicRow;
+import com.naraci.app.media.entity.request.QuotationRequest;
 import com.naraci.app.media.entity.response.WpsAllDataResponse;
 import com.naraci.core.aop.CustomException;
 import com.spire.xls.FileFormat;
@@ -15,10 +17,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.SocketTimeoutException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -338,5 +337,51 @@ public class WpsOnlineService {
         }
     }
 
+    public void quotation(QuotationRequest request) {
+
+        List<DynamicRow> collecList = request.getDynamicRows().stream().toList();
+//        获取列表中的数量
+        int dynamicRowSize = collecList.size();
+
+        // 输出 Excel 文件路径
+        String outputPath = "yuziapi/file";
+        File fileDirectory = new File(outputPath);
+        if (!fileDirectory.exists()) {
+            fileDirectory.mkdirs();
+        }
+        // Excel 模板路径
+        String templatePath = "yuziapi/template/报价模板.xlsx";
+
+//        try (FileInputStream fileInputStream = new FileInputStream(templatePath);
+//             Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+//
+//            /** 默认只填写B 列
+//             *  固定列 2-14行
+//             * 活动列 0下标 15-21行，若有超过一个活动列需要向左便宜对应数量
+//             */
+//            // 获取第一个工作表
+//            Sheet sheet = workbook.getSheetAt(0);
+//            // 写入固定列数据到B列（第2-14行）
+//            // 写入固定列数据到B列（第2-14行）
+//            int startRowForFixed = 1;  // 第2行，索引从0开始
+//            int fixedColumn = 1;  // B列，索引从0开始
+//            for (int i = 0; i < 15; i++) {
+//                Row row = sheet.getRow(startRowForFixed + i);
+//                Cell cell = row.getCell(fixedColumn);
+//                cell.setCellValue(fixedColumnData[i]);
+//            }
+//
+//    } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            outputFile.delete();
+//            File pdfFile = new File(outputFilePdfPath);
+//            pdfFile.delete();
+//        }
+//
+//        // 返回生成的文件对象
+//        return null;
+
+    }
 }
 
