@@ -10,14 +10,19 @@ import com.naraci.core.aop.CustomException;
 import com.spire.xls.FileFormat;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -210,7 +215,7 @@ public class WpsOnlineService {
             fileDirectory.mkdirs();
         }
         // Excel 模板路径
-        String templatePath = "YuziApi/yuziapi/template/头程账单模板.xlsx";
+        String templatePath = "yuziapi/template/头程账单模板.xlsx";
         // 定义输出的文件名
         String outputFilePath = outputPath + "/头程费用账单-" + formattedDate + "-" + object.getWarehousingNumber() +
                 "-费用合计-" + object.getCustomerInitialBillingTotal() + "元" + ".xlsx";
@@ -338,33 +343,51 @@ public class WpsOnlineService {
     }
 
     public void quotation(QuotationRequest request) {
+        log.info(request.toString());
 
-        // 模拟接收到的数据
+// 模拟接收到的数据
         List<DynamicRow> collecList = request.getDynamicRows();
         int dynamicRowSize = collecList.size();  // 动态列数量
 
-        // 输出 Excel 文件路径
+// 输出 Excel 文件路径
         String outputPath = "yuziapi/file";
         File fileDirectory = new File(outputPath);
         if (!fileDirectory.exists()) {
             fileDirectory.mkdirs();
         }
 
-        // Excel 模板路径
-        String templatePath = "YuziApi/yuziapi/template/报价模板.xlsx";
+// Excel 模板路径
+        String templatePath = "yuziapi/template/报价模板.xlsx";
 
         try (FileInputStream fileInputStream = new FileInputStream(templatePath);
              Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
-            /** 默认只填写B 列
-             *  固定列 2-14行
-             *  活动列 0下标 15-21行，若有超过一个活动列需要向左便宜对应数量
+            // 获取当前日期
+            LocalDate currentDate = LocalDate.now();
+
+            // 定义日期格式化器
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedDate = currentDate.format(formatter);
+
+            /** 默认只填写B列
+             *  固定列 3-16行
+             *  动态列 17-23行，动态列超过1个时向右偏移对应的列数
              */
 
             // 获取第一个工作表
             Sheet sheet = workbook.getSheetAt(0);
+            // 设置日期
+//            sheet.setrow
+            // 创建一行（第0行）
+            Row rowData = sheet.getRow(24);
 
-            // 写入固定列数据到B列（第2-14行）
+            // 创建一个单元格（第0列）
+            Cell cellData = rowData.getCell(3);
+
+            // 设置单元格的值
+            cellData.setCellValue("日期:"+ formattedDate);
+
+            // 写入固定列数据到B列（第3-16行）
             String[] fixedColumnData = {
                     request.getCustomerCode(), request.getTrackingNumber(), request.getItemName(),
                     request.getDestination(), request.getProductCategory(), String.valueOf(request.getQuantity()),
@@ -374,7 +397,7 @@ public class WpsOnlineService {
                     String.valueOf(request.getShelvingUnitPrice()), String.valueOf(request.getShelvingFee())
             };
 
-            int startRowForFixed = 1;  // 从第2行开始
+            int startRowForFixed = 2;  // 从第3行开始（Excel中的行从1开始，数组从0）
             int fixedColumn = 1;  // B列（索引从0开始）
             for (int i = 0; i < fixedColumnData.length; i++) {
                 Row row = sheet.getRow(startRowForFixed + i);
@@ -388,13 +411,15 @@ public class WpsOnlineService {
                 cell.setCellValue(fixedColumnData[i]);
             }
 
-            // 写入动态列数据到相应位置，从第15行开始
-            int startRowForDynamic = 14;  // 第15行（索引从0开始）
-            for (int dynamicIndex = 0; dynamicIndex < dynamicRowSize; dynamicIndex++) {
-                DynamicRow dynamicRow = collecList.get(dynamicIndex);
-                int currentColumn = fixedColumn + dynamicIndex;  // 动态列的位置，根据动态列数量偏移
+            // 写入动态列数据到相应位置，从第17行开始
+            int startRowForDynamic = 16;  // 第17行（Excel中的行从1开始，数组从0）
 
-                // 写入动态列数据（第15-21行）
+            // 循环处理每个动态列的数据
+            for (int dynamicIndex = 0; dynamicIndex < dynamicRowSize; ++dynamicIndex) {
+                DynamicRow dynamicRow = collecList.get(dynamicIndex);
+                int dynamicStartColumn = fixedColumn + dynamicIndex;  // 动态列的位置，从第一个动态列开始的相邻列（从C列开始）
+
+                // 写入动态列数据（第17-23行）
                 String[] dynamicColumnData = {
                         dynamicRow.getTransitTime(),
                         String.valueOf(dynamicRow.getFreightUnitPrice()),
@@ -409,22 +434,91 @@ public class WpsOnlineService {
                     if (row == null) {
                         row = sheet.createRow(startRowForDynamic + rowIndex);
                     }
-                    Cell cell = row.getCell(currentColumn);
+                    Cell cell = row.getCell(dynamicStartColumn); // 每个动态列开始填入对应的列
                     if (cell == null) {
-                        cell = row.createCell(currentColumn);
+                        cell = row.createCell(dynamicStartColumn);
                     }
                     cell.setCellValue(dynamicColumnData[rowIndex]);
                 }
             }
 
+
             // 输出到文件
             String outputFilePath = outputPath + "/报价表格.xlsx";
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
                 workbook.write(fileOutputStream);
+                log.info("写入成功路径" + outputFilePath);
+                excelExportPng();
             }
 
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void excelExportPng() throws IOException {
+        // 加载Excel文件
+        FileInputStream file = new FileInputStream("yuziapi/file/报价表格.xlsx");
+        Workbook workbook = new XSSFWorkbook(file);
+        Sheet sheet = workbook.getSheetAt(0); // 获取第一个工作表
+
+        // 设置图片大小，根据表格大小动态调整
+        int imageWidth = sheet.getRow(0).getLastCellNum() * 100;  // 根据列数调整宽度
+        int imageHeight = sheet.getLastRowNum() * 20;  // 根据行数调整高度
+
+        // 创建BufferedImage
+        BufferedImage image = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.setColor(Color.WHITE);  // 背景设置为白色
+        graphics.fillRect(0, 0, imageWidth, imageHeight); // 填充背景色
+
+        // 设置字体
+        Font font = new Font("Arial", Font.PLAIN, 12);
+        graphics.setFont(font);
+        graphics.setColor(Color.BLACK);  // 设置字体颜色为黑色
+
+        // 遍历表格行和列，绘制每个单元格的内容
+        for (int rowIndex = 0; rowIndex <= sheet.getLastRowNum(); rowIndex++) {
+            Row row = sheet.getRow(rowIndex);
+            if (row != null) {
+                for (int colIndex = 0; colIndex < row.getLastCellNum(); colIndex++) {
+                    Cell cell = row.getCell(colIndex);
+                    if (cell != null) {
+                        String cellValue = getCellValue(cell);
+                        int x = colIndex * 100;  // 每列宽度为100像素
+                        int y = rowIndex * 20 + 15;  // 每行高度为20像素，+15是为了调整文本的Y轴位置
+                        graphics.drawString(cellValue, x, y);
+                    }
+                }
+            }
+        }
+
+        // 将BufferedImage保存为文件
+        ImageIO.write(image, "png", new File("output_image.png"));
+
+        // 关闭资源
+        graphics.dispose();
+        workbook.close();
+        file.close();
+    }
+
+    // 获取单元格的字符串内容
+    private static String getCellValue(Cell cell) {
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return "";
         }
     }
 }

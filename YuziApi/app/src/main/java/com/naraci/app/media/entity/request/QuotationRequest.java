@@ -3,6 +3,7 @@ package com.naraci.app.media.entity.request;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class QuotationRequest {
     private Double volume;
 
     @Schema(description = "密度")
-    private Double density;
+    private BigDecimal density;
 
     @Schema(description = "货值")
     private Double value;
@@ -59,4 +60,6 @@ public class QuotationRequest {
 
     @Schema(description = "固定费用总计")
     private Double totalFixedCost;
+
 }
+
