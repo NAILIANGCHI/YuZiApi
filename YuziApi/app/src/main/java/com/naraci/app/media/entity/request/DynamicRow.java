@@ -29,4 +29,7 @@ public class DynamicRow {
 
     @Schema(description = "木箱费用")
     private Double crateFee;
+
+    @Schema(description = "总费用")
+    private Double TotalCost;
 }

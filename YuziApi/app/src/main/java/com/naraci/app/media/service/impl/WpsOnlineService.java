@@ -210,7 +210,7 @@ public class WpsOnlineService {
             fileDirectory.mkdirs();
         }
         // Excel 模板路径
-        String templatePath = "yuziapi/template/头程账单模板.xlsx";
+        String templatePath = "YuziApi/yuziapi/template/头程账单模板.xlsx";
         // 定义输出的文件名
         String outputFilePath = outputPath + "/头程费用账单-" + formattedDate + "-" + object.getWarehousingNumber() +
                 "-费用合计-" + object.getCustomerInitialBillingTotal() + "元" + ".xlsx";
@@ -339,9 +339,9 @@ public class WpsOnlineService {
 
     public void quotation(QuotationRequest request) {
 
-        List<DynamicRow> collecList = request.getDynamicRows().stream().toList();
-//        获取列表中的数量
-        int dynamicRowSize = collecList.size();
+        // 模拟接收到的数据
+        List<DynamicRow> collecList = request.getDynamicRows();
+        int dynamicRowSize = collecList.size();  // 动态列数量
 
         // 输出 Excel 文件路径
         String outputPath = "yuziapi/file";
@@ -349,39 +349,83 @@ public class WpsOnlineService {
         if (!fileDirectory.exists()) {
             fileDirectory.mkdirs();
         }
+
         // Excel 模板路径
-        String templatePath = "yuziapi/template/报价模板.xlsx";
+        String templatePath = "YuziApi/yuziapi/template/报价模板.xlsx";
 
-//        try (FileInputStream fileInputStream = new FileInputStream(templatePath);
-//             Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-//
-//            /** 默认只填写B 列
-//             *  固定列 2-14行
-//             * 活动列 0下标 15-21行，若有超过一个活动列需要向左便宜对应数量
-//             */
-//            // 获取第一个工作表
-//            Sheet sheet = workbook.getSheetAt(0);
-//            // 写入固定列数据到B列（第2-14行）
-//            // 写入固定列数据到B列（第2-14行）
-//            int startRowForFixed = 1;  // 第2行，索引从0开始
-//            int fixedColumn = 1;  // B列，索引从0开始
-//            for (int i = 0; i < 15; i++) {
-//                Row row = sheet.getRow(startRowForFixed + i);
-//                Cell cell = row.getCell(fixedColumn);
-//                cell.setCellValue(fixedColumnData[i]);
-//            }
-//
-//    } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            outputFile.delete();
-//            File pdfFile = new File(outputFilePdfPath);
-//            pdfFile.delete();
-//        }
-//
-//        // 返回生成的文件对象
-//        return null;
+        try (FileInputStream fileInputStream = new FileInputStream(templatePath);
+             Workbook workbook = new XSSFWorkbook(fileInputStream)) {
 
+            /** 默认只填写B 列
+             *  固定列 2-14行
+             *  活动列 0下标 15-21行，若有超过一个活动列需要向左便宜对应数量
+             */
+
+            // 获取第一个工作表
+            Sheet sheet = workbook.getSheetAt(0);
+
+            // 写入固定列数据到B列（第2-14行）
+            String[] fixedColumnData = {
+                    request.getCustomerCode(), request.getTrackingNumber(), request.getItemName(),
+                    request.getDestination(), request.getProductCategory(), String.valueOf(request.getQuantity()),
+                    String.valueOf(request.getWeight()), String.valueOf(request.getVolume()),
+                    String.valueOf(request.getDensity()), String.valueOf(request.getValue()),
+                    String.valueOf(request.getInsuranceFee()), String.valueOf(request.getPickupFee()),
+                    String.valueOf(request.getShelvingUnitPrice()), String.valueOf(request.getShelvingFee())
+            };
+
+            int startRowForFixed = 1;  // 从第2行开始
+            int fixedColumn = 1;  // B列（索引从0开始）
+            for (int i = 0; i < fixedColumnData.length; i++) {
+                Row row = sheet.getRow(startRowForFixed + i);
+                if (row == null) {
+                    row = sheet.createRow(startRowForFixed + i);
+                }
+                Cell cell = row.getCell(fixedColumn);
+                if (cell == null) {
+                    cell = row.createCell(fixedColumn);
+                }
+                cell.setCellValue(fixedColumnData[i]);
+            }
+
+            // 写入动态列数据到相应位置，从第15行开始
+            int startRowForDynamic = 14;  // 第15行（索引从0开始）
+            for (int dynamicIndex = 0; dynamicIndex < dynamicRowSize; dynamicIndex++) {
+                DynamicRow dynamicRow = collecList.get(dynamicIndex);
+                int currentColumn = fixedColumn + dynamicIndex;  // 动态列的位置，根据动态列数量偏移
+
+                // 写入动态列数据（第15-21行）
+                String[] dynamicColumnData = {
+                        dynamicRow.getTransitTime(),
+                        String.valueOf(dynamicRow.getFreightUnitPrice()),
+                        String.valueOf(dynamicRow.getPackingFee()),
+                        String.valueOf(dynamicRow.getPalletFee()),
+                        String.valueOf(dynamicRow.getCrateFee()),
+                        String.valueOf(dynamicRow.getTotalCost())
+                };
+
+                for (int rowIndex = 0; rowIndex < dynamicColumnData.length; rowIndex++) {
+                    Row row = sheet.getRow(startRowForDynamic + rowIndex);
+                    if (row == null) {
+                        row = sheet.createRow(startRowForDynamic + rowIndex);
+                    }
+                    Cell cell = row.getCell(currentColumn);
+                    if (cell == null) {
+                        cell = row.createCell(currentColumn);
+                    }
+                    cell.setCellValue(dynamicColumnData[rowIndex]);
+                }
+            }
+
+            // 输出到文件
+            String outputFilePath = outputPath + "/报价表格.xlsx";
+            try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
+                workbook.write(fileOutputStream);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
