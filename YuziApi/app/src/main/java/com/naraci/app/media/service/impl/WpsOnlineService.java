@@ -263,17 +263,17 @@ public class WpsOnlineService {
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile)) {
                 workbook.write(fileOutputStream);
             }
-            Boolean isTrue = convertExcelToPdf(outputFilePath, outputFilePdfPath);
-            if (!isTrue) {
+//            Boolean isTrue = convertExcelToPdf(outputFilePath, outputFilePdfPath);
+            if (outputFilePath.isEmpty()) {
                 throw new CustomException("推送失败");
             }
-            return mediaId(outputFilePdfPath);
+            return mediaId(outputFilePath);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             outputFile.delete();
-            File pdfFile = new File(outputFilePdfPath);
-            pdfFile.delete();
+//            File pdfFile = new File(outputFilePdfPath);
+//            pdfFile.delete();
         }
 
         // 返回生成的文件对象
@@ -345,7 +345,6 @@ public class WpsOnlineService {
     public void quotation(QuotationRequest request) {
         log.info(request.toString());
 
-// 模拟接收到的数据
         List<DynamicRow> collecList = request.getDynamicRows();
         int dynamicRowSize = collecList.size();  // 动态列数量
 
