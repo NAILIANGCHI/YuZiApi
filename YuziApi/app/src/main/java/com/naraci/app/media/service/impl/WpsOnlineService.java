@@ -275,7 +275,6 @@ public class WpsOnlineService {
 //            File pdfFile = new File(outputFilePdfPath);
 //            pdfFile.delete();
         }
-
         // 返回生成的文件对象
         return null;
     }
@@ -342,7 +341,7 @@ public class WpsOnlineService {
         }
     }
 
-    public void quotation(QuotationRequest request) {
+    public String quotation(QuotationRequest request) {
         log.info(request.toString());
 
         List<DynamicRow> collecList = request.getDynamicRows();
@@ -355,8 +354,8 @@ public class WpsOnlineService {
             fileDirectory.mkdirs();
         }
 
-// Excel 模板路径
-        String templatePath = "yuziapi/template/报价模板.xlsx";
+        // Excel 模板路径
+        String templatePath = "D:\\Code\\YuZiApi\\YuziApi\\yuziapi\\template\\报价模板.xlsx";
 
         try (FileInputStream fileInputStream = new FileInputStream(templatePath);
              Workbook workbook = new XSSFWorkbook(fileInputStream)) {
@@ -443,13 +442,51 @@ public class WpsOnlineService {
 
 
             // 输出到文件
-            String outputFilePath = outputPath + "/报价表格.xlsx";
+            String outputFilePath = outputPath + "/报价模板.xlsx";
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
                 workbook.write(fileOutputStream);
                 log.info("写入成功路径" + outputFilePath);
-                excelExportPng();
+//                excelExportPng();
             }
+            pushRobotApi(mediaId(outputFilePath));
+            return mediaId(outputFilePath);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outputPath;
+    }
+
+    public void pushRobotApi(String id) {
+        // 创建 OkHttpClient 实例
+        OkHttpClient client = new OkHttpClient();
+
+        // 去掉引号
+        id = id.replace("\"", "");
+
+        String json = String.format("{\n" +
+                "    \"msgtype\": \"file\",\n" +
+                "    \"file\": {\n" +
+                "        \"media_id\": \"%s\"\n" +
+                "    }\n" +
+                "}", id);
+
+        // 创建 RequestBody
+        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+        RequestBody body = RequestBody.create(mediaType, json);
+        // 构建请求
+        Request request = new Request.Builder()
+                .url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25")
+                .post(body)
+                .build();
+
+        // 发送请求并处理响应
+        try (Response response = client.newCall(request).execute()) {
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+            // 输出响应内容
+            assert response.body() != null;
+            log.info(response.body().string());
         } catch (IOException e) {
             e.printStackTrace();
         }
