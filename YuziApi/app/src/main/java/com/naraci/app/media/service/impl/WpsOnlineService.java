@@ -136,48 +136,44 @@ public class WpsOnlineService {
         wpsPageDataResponse.setTotalPages(pages.findValue("totalPages").intValue());
         wpsPageDataResponse.setPageData(allDataResponses);
         return wpsPageDataResponse;
-
-/*          const totalRecords =rowData.length; // 总记录数
-            const totalPages =Math.ceil(totalRecords /pageSize); // 总页数
-            const startIndex =(page -1)*pageSize; // 起始索引
-            const endIndex =startIndex +pageSize; // 结束索引
-            const pagedData =rowData.slice(startIndex,endIndex); // 分页数据*/
     }
 
+    // 推送账单到机器人
     public void pushWxRobot(CheckTemplateRequest obj) {
         String id = checkPdfFile(obj);
-        // 创建 OkHttpClient 实例
-        OkHttpClient client = new OkHttpClient();
-
-        // 去掉引号
-        id = id.replace("\"", "");
-
-        String json = String.format("{\n" +
-                "    \"msgtype\": \"file\",\n" +
-                "    \"file\": {\n" +
-                "        \"media_id\": \"%s\"\n" +
-                "    }\n" +
-                "}", id);
-
-        // 创建 RequestBody
-        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-        RequestBody body = RequestBody.create(mediaType, json);
-        // 构建请求
-        Request request = new Request.Builder()
-                .url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25")
-                .post(body)
-                .build();
-
-        // 发送请求并处理响应
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-            // 输出响应内容
-            assert response.body() != null;
-            log.info(response.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        pushRobotApi(id);
+//        // 创建 OkHttpClient 实例
+//        OkHttpClient client = new OkHttpClient();
+//
+//        // 去掉引号
+//        id = id.replace("\"", "");
+//
+//        String json = String.format("{\n" +
+//                "    \"msgtype\": \"file\",\n" +
+//                "    \"file\": {\n" +
+//                "        \"media_id\": \"%s\"\n" +
+//                "    }\n" +
+//                "}", id);
+//
+//        // 创建 RequestBody
+//        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
+//        RequestBody body = RequestBody.create(mediaType, json);
+//        // 构建请求
+//        Request request = new Request.Builder()
+//                .url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25")
+//                .post(body)
+//                .build();
+//
+//        // 发送请求并处理响应
+//        try (Response response = client.newCall(request).execute()) {
+//            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+//
+//            // 输出响应内容
+//            assert response.body() != null;
+//            log.info(response.body().string());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public String checkPdfFile(CheckTemplateRequest object) {
@@ -279,6 +275,7 @@ public class WpsOnlineService {
         return null;
     }
 
+    // 文件推送到微信服务器 返回文件id
     public String mediaId(String filePath) throws IOException {
         // Webhook URL (含key)
         String url = "https://qyapi.weixin.qq.com/cgi-bin/webhook/upload_media?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25&type=file";
@@ -328,19 +325,7 @@ public class WpsOnlineService {
         }
     }
 
-    public static Boolean convertExcelToPdf(String excelFilePath, String pdfFilePath) {
-        // 加载Excel文档.
-        try {
-            com.spire.xls.Workbook wb = new com.spire.xls.Workbook();
-            wb.loadFromFile(excelFilePath);
-            // 调用方法保存为PDF格式.
-            wb.saveToFile(pdfFilePath, FileFormat.PDF);
-            return true;
-        }catch (Exception e) {
-            throw new CustomException("导出失败!");
-        }
-    }
-
+    // 推送报价列表
     public String quotation(QuotationRequest request) {
         log.info(request.toString());
 
@@ -446,7 +431,6 @@ public class WpsOnlineService {
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFilePath)) {
                 workbook.write(fileOutputStream);
                 log.info("写入成功路径" + outputFilePath);
-//                excelExportPng();
             }
             pushRobotApi(mediaId(outputFilePath));
             return mediaId(outputFilePath);
@@ -457,6 +441,7 @@ public class WpsOnlineService {
         return outputPath;
     }
 
+    // 推送机器人接口
     public void pushRobotApi(String id) {
         // 创建 OkHttpClient 实例
         OkHttpClient client = new OkHttpClient();
@@ -489,6 +474,27 @@ public class WpsOnlineService {
             log.info(response.body().string());
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    // 获取单元格的字符串内容 Tools
+    private static String getCellValue(Cell cell) {
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    return cell.getDateCellValue().toString();
+                } else {
+                    return String.valueOf(cell.getNumericCellValue());
+                }
+            case BOOLEAN:
+                return String.valueOf(cell.getBooleanCellValue());
+            case FORMULA:
+                return cell.getCellFormula();
+            default:
+                return "";
         }
     }
 
@@ -538,24 +544,18 @@ public class WpsOnlineService {
         file.close();
     }
 
-    // 获取单元格的字符串内容
-    private static String getCellValue(Cell cell) {
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString();
-                } else {
-                    return String.valueOf(cell.getNumericCellValue());
-                }
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                return cell.getCellFormula();
-            default:
-                return "";
+    public static Boolean convertExcelToPdf(String excelFilePath, String pdfFilePath) {
+        // 加载Excel文档.
+        try {
+            com.spire.xls.Workbook wb = new com.spire.xls.Workbook();
+            wb.loadFromFile(excelFilePath);
+            // 调用方法保存为PDF格式.
+            wb.saveToFile(pdfFilePath, FileFormat.PDF);
+            return true;
+        }catch (Exception e) {
+            throw new CustomException("导出失败!");
         }
     }
+
 }
 
