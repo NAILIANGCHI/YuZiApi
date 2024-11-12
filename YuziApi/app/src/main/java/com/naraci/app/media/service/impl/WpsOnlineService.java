@@ -142,38 +142,6 @@ public class WpsOnlineService {
     public void pushWxRobot(CheckTemplateRequest obj) {
         String id = checkPdfFile(obj);
         pushRobotApi(id);
-//        // 创建 OkHttpClient 实例
-//        OkHttpClient client = new OkHttpClient();
-//
-//        // 去掉引号
-//        id = id.replace("\"", "");
-//
-//        String json = String.format("{\n" +
-//                "    \"msgtype\": \"file\",\n" +
-//                "    \"file\": {\n" +
-//                "        \"media_id\": \"%s\"\n" +
-//                "    }\n" +
-//                "}", id);
-//
-//        // 创建 RequestBody
-//        MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
-//        RequestBody body = RequestBody.create(mediaType, json);
-//        // 构建请求
-//        Request request = new Request.Builder()
-//                .url("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=4387ab7d-e419-44a2-acc5-c54fe19b6d25")
-//                .post(body)
-//                .build();
-//
-//        // 发送请求并处理响应
-//        try (Response response = client.newCall(request).execute()) {
-//            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-//
-//            // 输出响应内容
-//            assert response.body() != null;
-//            log.info(response.body().string());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public String checkPdfFile(CheckTemplateRequest object) {
@@ -268,8 +236,6 @@ public class WpsOnlineService {
             e.printStackTrace();
         } finally {
             outputFile.delete();
-//            File pdfFile = new File(outputFilePdfPath);
-//            pdfFile.delete();
         }
         // 返回生成的文件对象
         return null;
